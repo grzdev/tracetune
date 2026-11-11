@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TraceTune — Autonomous Code & Security Agent Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+    body { font-family: 'Space Grotesk', sans-serif; background: #090d16; color: #f1f5f9; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased">
+  <!-- Top Navigation Bar -->
+  <header class="border-b border-slate-800 bg-slate-900/70 backdrop-blur-md px-6 py-4 flex items-center justify-between sticky top-0 z-30">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-cyan-500/20">
+        TT
+      </div>
+      <div>
+        <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+          TraceTune
+          <span class="text-xs font-mono font-medium bg-cyan-950 text-cyan-400 border border-cyan-800 px-2 py-0.5 rounded">v0.1.0</span>
+        </h1>
+        <p class="text-xs text-slate-400">Agentic Fine-Tuning on Cohere Tiny Aya • Lexsi Stack</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3 text-xs font-mono">
+      <span class="px-3 py-1 rounded-full bg-slate-800 text-slate-300 border border-slate-700">Track 3: Agentic Fine-Tuning</span>
+      <span class="px-3 py-1 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-800">AgentTune + AuditKIT</span>
+      <span class="px-3 py-1 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Runtime Ready
+      </span>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <!-- Left Column: Controls & Target Selector -->
+    <div class="lg:col-span-4 flex flex-col gap-6">
+      <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-5 shadow-xl">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+          <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          Investigation Setup
+        </h2>
+
+        <!-- Target File Selector -->
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-slate-300 mb-1.5">Target Sandbox File</label>
+          <select id="targetSelect" class="w-full bg-slate-950 border border-slate-700 text-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-cyan-500 font-mono">
+            <option value="sql_injection.py">sql_injection.py (CWE-89 SQLi)</option>
+            <option value="auth_bypass.py">auth_bypass.py (CWE-287 Auth Bypass)</option>
+            <option value="secret_leak.py">secret_leak.py (CWE-798 Secrets)</option>
+            <option value="prototype_pollution.js">prototype_pollution.js (CWE-1321)</option>
+          </select>
+        </div>
+
+        <!-- Task Prompt -->
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-slate-300 mb-1.5">Task Instruction</label>
+          <textarea id="taskPrompt" rows="3" class="w-full bg-slate-950 border border-slate-700 text-slate-200 rounded-lg p-3 text-sm focus:outline-none focus:border-cyan-500" placeholder="Audit this file, verify code citations, and file a triage report.">Audit this target file for potential security vulnerabilities, verify evidence citations, and file a structured triage report.</textarea>
+        </div>
+
+        <!-- Model Mode Selector -->
+        <div class="mb-5">
+          <label class="block text-xs font-medium text-slate-300 mb-2">Model Policy Execution</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-700 bg-slate-950 cursor-pointer hover:border-cyan-600 transition">
+              <input type="radio" name="modelMode" value="tuned" checked class="text-cyan-500 focus:ring-0">
+              <span class="text-xs font-medium text-cyan-300">TraceTuned</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-700 bg-slate-950 cursor-pointer hover:border-slate-500 transition">
+              <input type="radio" name="modelMode" value="baseline" class="text-slate-500 focus:ring-0">
+              <span class="text-xs font-medium text-slate-400">Untuned Base</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Launch Button -->
+        <button id="runBtn" class="w-full bg-gradient-to-r from-cyan-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-semibold py-2.5 px-4 rounded-lg shadow-lg shadow-cyan-600/20 flex items-center justify-center gap-2 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
+          Run Autonomous Agent
+        </button>
+      </div>
+
+      <!-- Quick Metrics Summary -->
+      <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-5">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
+          <span>AuditKIT Scorecard</span>
+          <span class="text-xs text-cyan-400 lowercase font-mono cursor-pointer hover:underline" onclick="fetchBenchmark()">Refresh</span>
+        </h2>
+        <div class="grid grid-cols-2 gap-3" id="quickMetrics">
+          <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg">
+            <span class="text-xs text-slate-400 block">Schema Validity</span>
+            <span class="text-xl font-bold text-emerald-400 font-mono" id="metricSVI">100%</span>
+            <span class="text-[10px] text-slate-500 block">vs 50% baseline</span>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg">
+            <span class="text-xs text-slate-400 block">Step Efficiency</span>
+            <span class="text-xl font-bold text-cyan-400 font-mono" id="metricSER">1.00</span>
+            <span class="text-[10px] text-slate-500 block">optimal 4 steps</span>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg">
+            <span class="text-xs text-slate-400 block">Loop Rate</span>
+            <span class="text-xl font-bold text-emerald-400 font-mono" id="metricLTS">0.0%</span>
+            <span class="text-[10px] text-slate-500 block">vs 25% loops</span>
+          </div>
+          <div class="bg-slate-950 border border-slate-800 p-3 rounded-lg">
+            <span class="text-xs text-slate-400 block">Citation Precision</span>
+            <span class="text-xl font-bold text-indigo-400 font-mono" id="metricGCP">100%</span>
+            <span class="text-[10px] text-slate-500 block">verified lines</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Visual Timeline & EventLog -->
+    <div class="lg:col-span-8 flex flex-col gap-6">
+      <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-5 flex flex-col flex-1 shadow-xl">
+        <!-- Tabs -->
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+          <div class="flex gap-4">
+            <button class="text-sm font-semibold text-cyan-400 border-b-2 border-cyan-400 pb-1" id="tabTimelineBtn">Live Trajectory Timeline</button>
+            <button class="text-sm font-medium text-slate-400 hover:text-slate-200 pb-1" id="tabJsonBtn">EventLog (AgentTune)</button>
+            <button class="text-sm font-medium text-slate-400 hover:text-slate-200 pb-1" id="tabAuditBtn">AuditKIT Full Benchmarks</button>
+          </div>
+          <div id="statusBadge" class="text-xs font-mono px-2.5 py-1 rounded bg-slate-800 text-slate-400">
+            Awaiting Run
+          </div>
+        </div>
+
+        <!-- View 1: Timeline -->
+        <div id="timelineView" class="space-y-4 flex-1 overflow-y-auto max-h-[640px] pr-2">
+          <div class="text-center py-16 text-slate-500 text-sm">
+            Select a sandbox target file and click <b class="text-slate-400">Run Autonomous Agent</b> to see the multi-turn tool trajectory.
+          </div>
+        </div>
+
+        <!-- View 2: Raw EventLog -->
+        <div id="jsonView" class="hidden flex-1 overflow-y-auto max-h-[640px]">
+          <pre id="jsonContent" class="mono text-xs bg-slate-950 p-4 rounded-lg text-cyan-300 border border-slate-800 overflow-x-auto"></pre>
+        </div>
+
+        <!-- View 3: Full AuditKIT Benchmark Table -->
+        <div id="auditView" class="hidden flex-1 overflow-y-auto max-h-[640px]">
+          <div id="auditContent" class="space-y-4"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const runBtn = document.getElementById('runBtn');
+    const targetSelect = document.getElementById('targetSelect');
+    const taskPrompt = document.getElementById('taskPrompt');
+    const timelineView = document.getElementById('timelineView');
+    const jsonView = document.getElementById('jsonView');
+    const auditView = document.getElementById('auditView');
+    const jsonContent = document.getElementById('jsonContent');
+    const auditContent = document.getElementById('auditContent');
+    const statusBadge = document.getElementById('statusBadge');
+
+    let currentLog = null;
+
+    // Tab Switching
+    document.getElementById('tabTimelineBtn').onclick = () => showTab('timeline');
+    document.getElementById('tabJsonBtn').onclick = () => showTab('json');
+    document.getElementById('tabAuditBtn').onclick = () => showTab('audit');
+
+    function showTab(tab) {
+      timelineView.classList.toggle('hidden', tab !== 'timeline');
+      jsonView.classList.toggle('hidden', tab !== 'json');
+      auditView.classList.toggle('hidden', tab !== 'audit');
+      if (tab === 'audit') fetchBenchmark();
+    }
+
+    runBtn.onclick = async () => {
+      const mode = document.querySelector('input[name="modelMode"]:checked').value;
+      const target = targetSelect.value;
+      const prompt = taskPrompt.value;
+
+      runBtn.disabled = true;
+      runBtn.innerHTML = '<span class="animate-spin inline-block mr-2">⏳</span> Executing Agent...';
+      statusBadge.className = "text-xs font-mono px-2.5 py-1 rounded bg-amber-950 text-amber-300 border border-amber-800 animate-pulse";
+      statusBadge.textContent = "Agent Running...";
+
+      try {
+        const res = await fetch('/api/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ task_prompt: prompt, target_file: target, mode: mode })
+        });
+        const log = await res.json();
+        currentLog = log;
+        renderTimeline(log);
+        jsonContent.textContent = JSON.stringify(log, null, 2);
+
+        statusBadge.className = log.is_completed
+          ? "text-xs font-mono px-2.5 py-1 rounded bg-emerald-950 text-emerald-300 border border-emerald-800"
+          : "text-xs font-mono px-2.5 py-1 rounded bg-red-950 text-red-300 border border-red-800";
+        statusBadge.textContent = log.is_completed ? `Completed (${log.total_steps} steps)` : `Loop / Incomplete`;
+      } catch (err) {
+        timelineView.innerHTML = `<div class="p-4 bg-red-950 border border-red-800 text-red-300 rounded text-sm">Error executing agent: ${err.message}</div>`;
+      } finally {
+        runBtn.disabled = false;
+        runBtn.innerHTML = '<svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg> Run Autonomous Agent';
+      }
+    };
+
+    function renderTimeline(log) {
+      if (!log.tool_events || log.tool_events.length === 0) {
+        timelineView.innerHTML = `<div class="p-4 text-slate-400">No events recorded.</div>`;
+        return;
+      }
+
+      timelineView.innerHTML = log.tool_events.map((ev, i) => {
+        const trans = log.transitions.find(t => t.step === ev.step) || {};
+        const isError = ev.is_error;
+        const badgeColor = isError ? "bg-red-900/60 text-red-300 border-red-700" : "bg-emerald-900/60 text-emerald-300 border-emerald-700";
+
+        return `
+          <div class="border border-slate-800 rounded-lg p-4 bg-slate-950 relative hover:border-slate-700 transition">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-cyan-950 border border-cyan-800 text-cyan-400 text-xs font-mono font-bold flex items-center justify-center">
+                  ${ev.step}
+                </span>
+                <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">${trans.intent || 'ACTION'}</span>
+              </div>
+              <span class="text-xs font-mono px-2 py-0.5 rounded border ${badgeColor}">
+                ${isError ? 'Syntax / Exec Error' : 'Schema Validated'}
+              </span>
+            </div>
+
+            <p class="text-sm text-slate-200 mb-3 italic">"${trans.thought || ''}"</p>
+
+            <div class="bg-slate-900 rounded p-2.5 border border-slate-800 font-mono text-xs mb-2">
+              <span class="text-purple-400 font-semibold">${ev.tool_name}</span><span class="text-slate-400">(</span><span class="text-amber-300">${JSON.stringify(ev.arguments)}</span><span class="text-slate-400">)</span>
+            </div>
+
+            <div class="bg-slate-900/60 rounded p-2.5 border border-slate-800 font-mono text-xs text-slate-300 max-h-32 overflow-y-auto">
+              <span class="text-slate-500 block mb-1">Observation:</span>
+              <pre class="whitespace-pre-wrap">${JSON.stringify(ev.output, null, 2)}</pre>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (log.final_report) {
+        timelineView.innerHTML += `
+          <div class="border border-emerald-800/80 rounded-lg p-5 bg-emerald-950/20">
+            <h3 class="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Final Security Triage Report
+            </h3>
+            <div class="text-xs font-mono space-y-1.5 text-slate-300">
+              <div><b class="text-slate-400">Vulnerability:</b> <span class="text-white">${log.final_report.vuln_type}</span></div>
+              <div><b class="text-slate-400">Severity:</b> <span class="px-2 py-0.5 rounded bg-red-950 text-red-300 border border-red-800 font-bold">${log.final_report.severity}</span></div>
+              <div><b class="text-slate-400">Summary:</b> ${log.final_report.summary}</div>
+              <div><b class="text-slate-400">Evidence Lines:</b> ${JSON.stringify(log.final_report.evidence_lines)}</div>
+              <div><b class="text-slate-400">Remediation:</b> <span class="text-emerald-300">${log.final_report.recommended_fix}</span></div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    async function fetchBenchmark() {
+      auditContent.innerHTML = `<div class="p-6 text-center text-slate-400 text-sm">Computing AuditKIT benchmarks across test suites...</div>`;
+      try {
+        const res = await fetch('/api/benchmark');
+        const data = await res.json();
+
+        document.getElementById('metricSVI').textContent = `${data.tuned.metrics.schema_validity_index_pct}%`;
+        document.getElementById('metricSER').textContent = `${data.tuned.metrics.step_efficiency_ratio}`;
+        document.getElementById('metricLTS').textContent = `${data.tuned.metrics.loop_trajectory_pct}%`;
+        document.getElementById('metricGCP').textContent = `${data.tuned.metrics.grounded_citation_precision_pct}%`;
+
+        auditContent.innerHTML = `
+          <div class="p-4 bg-slate-950 border border-slate-800 rounded-lg">
+            <h3 class="text-xs font-mono uppercase tracking-wider text-slate-400 mb-2">AuditKIT Provenance Signature</h3>
+            <div class="font-mono text-xs text-cyan-400 bg-slate-900 p-2 rounded border border-slate-800 flex justify-between">
+              <span>Fingerprint: <b>${data.tuned.run_fingerprint}</b></span>
+              <span class="text-slate-500">${data.auditkit_spec}</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="border border-slate-800 bg-slate-950 p-4 rounded-lg">
+              <h4 class="text-xs font-bold text-slate-400 uppercase mb-3">Baseline Tiny Aya (Untuned)</h4>
+              <ul class="text-xs font-mono space-y-2 text-slate-300">
+                <li class="flex justify-between"><span>Schema Validity (SVI):</span> <b class="text-red-400">${data.baseline.metrics.schema_validity_index_pct}%</b></li>
+                <li class="flex justify-between"><span>Step Efficiency (SER):</span> <b class="text-amber-400">${data.baseline.metrics.step_efficiency_ratio}</b></li>
+                <li class="flex justify-between"><span>Loop Trajectory (LTS):</span> <b class="text-red-400">${data.baseline.metrics.loop_trajectory_pct}%</b></li>
+                <li class="flex justify-between"><span>Citation Precision (GCP):</span> <b class="text-amber-400">${data.baseline.metrics.grounded_citation_precision_pct}%</b></li>
+              </ul>
+            </div>
+            <div class="border border-cyan-800/60 bg-cyan-950/10 p-4 rounded-lg">
+              <h4 class="text-xs font-bold text-cyan-400 uppercase mb-3">TraceTuned Tiny Aya (Post-Trained)</h4>
+              <ul class="text-xs font-mono space-y-2 text-slate-300">
+                <li class="flex justify-between"><span>Schema Validity (SVI):</span> <b class="text-emerald-400">${data.tuned.metrics.schema_validity_index_pct}% (+${data.deltas.schema_validity_improvement}%)</b></li>
+                <li class="flex justify-between"><span>Step Efficiency (SER):</span> <b class="text-cyan-400">${data.tuned.metrics.step_efficiency_ratio} (+${data.deltas.step_efficiency_gain})</b></li>
+                <li class="flex justify-between"><span>Loop Trajectory (LTS):</span> <b class="text-emerald-400">${data.tuned.metrics.loop_trajectory_pct}% (-${data.deltas.loop_reduction_pct}%)</b></li>
+                <li class="flex justify-between"><span>Citation Precision (GCP):</span> <b class="text-indigo-400">${data.tuned.metrics.grounded_citation_precision_pct}% (+${data.deltas.citation_precision_gain}%)</b></li>
+              </ul>
+            </div>
+          </div>
+        `;
+      } catch (e) {
+        auditContent.innerHTML = `<div class="p-4 bg-red-950 text-red-300 text-sm">Failed to load benchmark: ${e.message}</div>`;
+      }
+    }
+  </script>
+</body>
+</html>
