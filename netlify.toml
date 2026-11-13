@@ -1,0 +1,3 @@
+[build]
+  publish = "src/web/static"
+  command = "echo 'Deploying TraceTune Interactive Agent & AuditKIT Platform'"
