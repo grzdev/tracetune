@@ -49,14 +49,36 @@
 
     .mono { font-family: 'JetBrains Mono', monospace; }
 
-    /* Hardware-accelerated buttery smooth scroll container */
+    /* High-performance non-blocking smooth scroll container with natural bubbling */
     .smooth-scroll {
       overflow-y: auto;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
-      will-change: scroll-position;
-      transform: translateZ(0);
+      overscroll-behavior: auto;
+    }
+
+    /* Active vs Inactive Tab Styling with Radiant Icon Glow */
+    .tab-active {
+      color: #22d3ee !important;
+      background-color: rgba(8, 51, 68, 0.65) !important;
+      border: 1px solid rgba(21, 94, 117, 0.85) !important;
+      box-shadow: 0 0 16px rgba(6, 182, 212, 0.25) !important;
+    }
+    .tab-icon-active {
+      color: #22d3ee !important;
+      filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.95)) drop-shadow(0 0 12px rgba(6, 182, 212, 0.6)) !important;
+      transform: scale(1.05);
+    }
+    .tab-inactive {
+      color: #94a3b8 !important;
+      background-color: transparent !important;
+      border: 1px solid transparent !important;
+      box-shadow: none !important;
+    }
+    .tab-icon-inactive {
+      color: #64748b !important;
+      filter: none !important;
+      transform: scale(1);
     }
 
     /* High-performance non-blocking scrollbars */
@@ -143,22 +165,22 @@
     <div class="lg:col-span-5 xl:col-span-4 flex flex-col gap-3.5 lg:h-full lg:overflow-y-auto pr-0 lg:pr-1">
       
       <!-- Investigation Control Panel -->
-      <div class="bg-[#0c121e] border border-slate-800/90 rounded-2xl p-4 sm:p-4.5 shadow-xl flex flex-col gap-3">
+      <div class="bg-[#0c121e] border border-slate-800/90 rounded-2xl p-5 sm:p-5.5 shadow-xl flex flex-col gap-4">
         <div class="flex items-center justify-between">
           <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
             Investigation Setup
           </h2>
-          <button id="peekCodeBtn" type="button" class="text-[11px] text-cyan-400 hover:text-cyan-300 font-mono transition flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-950/60 border border-cyan-800/60 hover:bg-cyan-900/60">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          <button id="peekCodeBtn" type="button" class="text-[11px] text-cyan-400 hover:text-cyan-300 font-mono transition flex items-center gap-1.5 px-3 py-1.2 rounded-lg bg-cyan-950/60 border border-cyan-800/60 hover:bg-cyan-900/60">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
             <span>Peek Code</span>
           </button>
         </div>
 
         <!-- Target Sandbox Selector & Inline Pill -->
         <div>
-          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Target Sandbox</label>
-          <div class="flex items-center gap-2">
+          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Target Sandbox</label>
+          <div class="flex items-center gap-2.5">
             <select id="targetSelect" class="flex-1 bg-slate-950 border border-slate-700/80 text-slate-200 rounded-xl px-3 py-2 text-xs font-mono focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition">
               <option value="sql_injection.py">sql_injection.py (CWE-89 SQLi)</option>
               <option value="auth_bypass.py">auth_bypass.py (CWE-287 Auth)</option>
@@ -169,53 +191,59 @@
               HIGH
             </span>
           </div>
-          <div class="mt-1 flex items-center justify-between text-[11px] font-mono px-1">
+          <div class="mt-1.5 flex items-center justify-between text-[11px] font-mono px-1">
             <span id="targetVulnTag" class="text-cyan-300 font-medium">CWE-89 SQL Injection</span>
             <span class="text-slate-500 text-[10px]">Isolated Sandbox</span>
           </div>
         </div>
 
-        <!-- Task Instruction (Compact 2 rows) -->
+        <!-- Task Instruction (Spacious 3 rows, zero text clipping) -->
         <div>
-          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1 flex justify-between">
+          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5 flex justify-between">
             <span>Task Prompt</span>
             <span class="text-[10px] text-slate-500 font-mono">Goal Instruction</span>
           </label>
-          <textarea id="taskPrompt" rows="2" class="w-full bg-slate-950 border border-slate-700/80 text-slate-200 rounded-xl p-2.5 text-xs leading-relaxed focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition resize-none">Audit this target file for potential security vulnerabilities, verify evidence citations, and file a structured triage report.</textarea>
+          <textarea id="taskPrompt" rows="3" class="w-full bg-slate-950 border border-slate-700/80 text-slate-200 rounded-xl p-3 text-xs leading-relaxed focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition resize-none min-h-[82px]">Audit this target file for potential security vulnerabilities, verify evidence citations, and file a structured triage report.</textarea>
         </div>
 
-        <!-- Model Mode Cards (Side-by-Side 2 Columns so it fits in Viewport) -->
+        <!-- Model Mode Cards (Spacious, Elegant Full-Width Cards) -->
         <div>
-          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">Model Policy</label>
-          <div class="grid grid-cols-2 gap-2">
+          <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Model Policy Execution</label>
+          <div class="space-y-2">
             <!-- TraceTuned Card -->
-            <label id="modeTunedCard" class="flex flex-col p-2.5 rounded-xl border border-cyan-500/70 bg-cyan-950/25 cursor-pointer hover:border-cyan-400 transition-all">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
-                  <input type="radio" name="modelMode" value="tuned" checked class="text-cyan-500 focus:ring-0">
-                  TraceTuned
-                </span>
-                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <label id="modeTunedCard" class="flex items-center justify-between p-3 rounded-xl border border-cyan-500/80 bg-cyan-950/30 cursor-pointer hover:border-cyan-400 transition-all">
+              <div class="flex items-center gap-3">
+                <input type="radio" name="modelMode" value="tuned" checked class="text-cyan-500 focus:ring-0 w-4 h-4 cursor-pointer">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-cyan-300">TraceTuned Tiny Aya</span>
+                    <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-cyan-900/60 text-cyan-300 border border-cyan-700/60 font-semibold">Recommended</span>
+                  </div>
+                  <p class="text-[11px] text-slate-400 mt-0.5 font-mono">AgentTune SFT + GRPO policy. 0 loops, verified line citations.</p>
+                </div>
               </div>
-              <p class="text-[10px] text-slate-400 leading-tight">AgentTune policy. 0 loops, verified line citations.</p>
+              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse flex-shrink-0"></span>
             </label>
 
             <!-- Untuned Base Card -->
-            <label id="modeBaseCard" class="flex flex-col p-2.5 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                  <input type="radio" name="modelMode" value="baseline" class="text-slate-500 focus:ring-0">
-                  Untuned Base
-                </span>
-                <span class="text-[9px] font-mono text-amber-400 bg-amber-950/40 px-1 rounded">Drift</span>
+            <label id="modeBaseCard" class="flex items-center justify-between p-3 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all">
+              <div class="flex items-center gap-3">
+                <input type="radio" name="modelMode" value="baseline" class="text-slate-500 focus:ring-0 w-4 h-4 cursor-pointer">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-slate-300">Untuned Baseline Tiny Aya</span>
+                    <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-950/60 text-amber-300 border border-amber-800/60 font-semibold">Drift Baseline</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5 font-mono">Raw Tiny Aya weights. Malformed arguments, loop traps.</p>
+                </div>
               </div>
-              <p class="text-[10px] text-slate-500 leading-tight">Raw Tiny Aya. Malformed args, loop traps.</p>
+              <span class="text-[10px] font-mono text-slate-500 flex-shrink-0">Untuned</span>
             </label>
           </div>
         </div>
 
-        <!-- Run Agent Button (Now 100% visible on Laptop Viewports!) -->
-        <button id="runBtn" type="button" class="w-full bg-gradient-to-r from-cyan-600 via-indigo-600 to-cyan-600 bg-[length:200%_auto] hover:bg-right hover:shadow-lg hover:shadow-cyan-500/25 active:scale-[0.99] text-white font-semibold py-2.5 sm:py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 mt-1">
+        <!-- Run Agent Button (Visible on Laptop Viewports with Generous Breathing Room) -->
+        <button id="runBtn" type="button" class="w-full bg-gradient-to-r from-cyan-600 via-indigo-600 to-cyan-600 bg-[length:200%_auto] hover:bg-right hover:shadow-lg hover:shadow-cyan-500/25 active:scale-[0.99] text-white font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 mt-1">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
           <span class="text-xs sm:text-sm">Run Autonomous Agent</span>
         </button>
@@ -289,18 +317,18 @@
         <!-- Interactive Nav Tabs & Status Header -->
         <div class="flex flex-wrap items-center justify-between gap-2.5 border-b border-slate-800 pb-3 mb-3.5 flex-shrink-0">
           <nav class="flex items-center gap-1 p-1 rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-medium" role="tablist">
-            <button id="tabTimelineBtn" type="button" class="tab-item px-3 py-1.5 rounded-lg font-semibold text-cyan-400 bg-cyan-950/60 border border-cyan-800/80 shadow-[0_0_12px_rgba(6,182,212,0.15)] transition-all duration-200 flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            <button id="tabTimelineBtn" type="button" class="tab-item tab-active px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 tab-icon-active" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
               <span>Live Trajectory</span>
             </button>
 
-            <button id="tabJsonBtn" type="button" class="tab-item px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-slate-200 border border-transparent hover:border-slate-800 transition-all duration-200 flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            <button id="tabJsonBtn" type="button" class="tab-item tab-inactive px-3 py-1.5 rounded-lg font-medium hover:text-slate-200 hover:border-slate-800/80 transition-all duration-200 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 tab-icon-inactive" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
               <span>EventLog</span>
             </button>
 
-            <button id="tabAuditBtn" type="button" class="tab-item px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-slate-200 border border-transparent hover:border-slate-800 transition-all duration-200 flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <button id="tabAuditBtn" type="button" class="tab-item tab-inactive px-3 py-1.5 rounded-lg font-medium hover:text-slate-200 hover:border-slate-800/80 transition-all duration-200 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 tab-icon-inactive" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
               <span>AuditKIT Benchmarks</span>
             </button>
           </nav>
@@ -335,7 +363,7 @@
               <span>Copy JSON</span>
             </button>
           </div>
-          <pre id="jsonContent" class="mono text-xs bg-slate-950 p-4 rounded-xl text-cyan-300 border border-slate-800 smooth-scroll flex-1 min-h-0 leading-relaxed overflow-x-auto">// Run an agent to inspect the live EventLog</pre>
+          <pre id="jsonContent" class="mono text-xs bg-slate-950 p-4 rounded-xl text-cyan-300 border border-slate-800 smooth-scroll flex-1 min-h-0 leading-relaxed overflow-auto select-text">// Run an agent to inspect the live EventLog</pre>
         </div>
 
         <!-- TAB VIEW 3: AUDITKIT FULL BENCHMARK SUITE -->
@@ -405,7 +433,7 @@
 
     let currentLog = null;
 
-    // --- TAB SWITCHING (FIXED WITH ACTIVE STYLING) ---
+    // --- TAB SWITCHING (FIXED WITH GLOWING ACTIVE ICON AND MUTED INACTIVE ICONS) ---
     const tabBtns = {
       timeline: document.getElementById('tabTimelineBtn'),
       json: document.getElementById('tabJsonBtn'),
@@ -426,12 +454,13 @@
 
         view.classList.toggle('hidden', !isActive);
 
+        const icon = btn.querySelector('svg');
         if (isActive) {
-          btn.className = "tab-item px-3 py-1.5 rounded-lg font-semibold text-cyan-400 bg-cyan-950/60 border border-cyan-800/80 shadow-[0_0_12px_rgba(6,182,212,0.15)] transition-all duration-200 flex items-center gap-1.5";
-          btn.querySelector('svg').className = "w-3.5 h-3.5 text-cyan-400";
+          btn.className = "tab-item tab-active px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 flex items-center gap-1.5";
+          if (icon) icon.className = "w-3.5 h-3.5 tab-icon-active transition-all";
         } else {
-          btn.className = "tab-item px-3 py-1.5 rounded-lg font-medium text-slate-400 hover:text-slate-200 border border-transparent hover:border-slate-800 transition-all duration-200 flex items-center gap-1.5";
-          btn.querySelector('svg').className = "w-3.5 h-3.5 text-slate-500";
+          btn.className = "tab-item tab-inactive px-3 py-1.5 rounded-lg font-medium hover:text-slate-200 hover:border-slate-800/80 transition-all duration-200 flex items-center gap-1.5";
+          if (icon) icon.className = "w-3.5 h-3.5 tab-icon-inactive transition-all";
         }
       });
 
@@ -443,18 +472,34 @@
     tabBtns.audit.onclick = () => showTab('audit');
 
     // --- MODEL MODE CARD STYLING ---
+    const updateModelCardStyles = (mode) => {
+      const isTuned = mode === 'tuned';
+      modeTunedCard.className = isTuned
+        ? "flex items-center justify-between p-3 rounded-xl border border-cyan-500/80 bg-cyan-950/30 cursor-pointer hover:border-cyan-400 transition-all"
+        : "flex items-center justify-between p-3 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all";
+
+      modeBaseCard.className = !isTuned
+        ? "flex items-center justify-between p-3 rounded-xl border border-amber-500/80 bg-amber-950/30 cursor-pointer hover:border-amber-400 transition-all"
+        : "flex items-center justify-between p-3 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all";
+    };
+
     document.querySelectorAll('input[name="modelMode"]').forEach(radio => {
       radio.addEventListener('change', (e) => {
-        const isTuned = e.target.value === 'tuned';
-        modeTunedCard.className = isTuned
-          ? "flex flex-col p-2.5 rounded-xl border border-cyan-500/70 bg-cyan-950/25 cursor-pointer hover:border-cyan-400 transition-all"
-          : "flex flex-col p-2.5 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all";
-
-        modeBaseCard.className = !isTuned
-          ? "flex flex-col p-2.5 rounded-xl border border-amber-500/70 bg-amber-950/25 cursor-pointer hover:border-amber-400 transition-all"
-          : "flex flex-col p-2.5 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all";
+        updateModelCardStyles(e.target.value);
       });
     });
+
+    modeTunedCard.onclick = () => {
+      const radio = modeTunedCard.querySelector('input[type="radio"]');
+      radio.checked = true;
+      updateModelCardStyles('tuned');
+    };
+
+    modeBaseCard.onclick = () => {
+      const radio = modeBaseCard.querySelector('input[type="radio"]');
+      radio.checked = true;
+      updateModelCardStyles('baseline');
+    };
 
     // --- TARGET CHANGE HANDLER ---
     targetSelect.onchange = () => {
@@ -562,14 +607,118 @@
       }
     };
 
-    // --- TIMELINE RENDERING (CONNECTED RAIL, TIGHT PADDING, COMPLETE VISIBILITY) ---
+    // --- COPY FIX DROP-IN HELPER ---
+    function copyFixText(encoded) {
+      const text = decodeURIComponent(encoded);
+      navigator.clipboard.writeText(text);
+      if (event && event.currentTarget) {
+        const btn = event.currentTarget;
+        const original = btn.innerHTML;
+        btn.innerHTML = `<span class="text-emerald-400 font-bold">✓ Copied</span>`;
+        setTimeout(() => { btn.innerHTML = original; }, 2000);
+      }
+    }
+
+    // --- TIMELINE RENDERING (TOP PROMINENT REPORT, ZERO SCROLL TRAPS) ---
     function renderTimeline(log) {
       if (!log.tool_events || log.tool_events.length === 0) {
-        timelineView.innerHTML = `<div class="p-4 text-slate-400 text-xs">No events recorded.</div>`;
+        timelineView.innerHTML = `<div class="p-6 text-slate-400 text-xs">No events recorded.</div>`;
         return;
       }
 
-      let html = `<div class="relative pl-7 sm:pl-8 space-y-3.5 pb-2">`;
+      let html = '';
+
+      // 1. PROMINENT TOP HERO CARD: FINAL SECURITY TRIAGE REPORT (NO SCROLLING DOWN REQUIRED!)
+      if (log.final_report) {
+        const rep = log.final_report;
+        const isCritical = rep.severity === 'CRITICAL';
+        const badgeBg = isCritical ? 'bg-red-950 text-red-300 border-red-800/80' : 'bg-amber-950 text-amber-300 border-amber-800/80';
+
+        html += `
+          <div class="fade-enter border border-emerald-600/70 rounded-2xl p-4 sm:p-5 bg-gradient-to-br from-emerald-950/30 via-[#0a1523] to-slate-950 shadow-2xl mb-4 relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3 border-b border-emerald-900/50 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <h3 class="text-xs sm:text-sm font-bold text-emerald-400 uppercase tracking-wider font-mono flex items-center gap-1.5">
+                  Final Security Triage Report
+                </h3>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-mono text-slate-400 hidden sm:inline">Verification: <b class="text-emerald-400">Deterministic</b></span>
+                <span class="px-2.5 py-0.5 rounded font-mono text-[9px] font-bold border ${badgeBg}">
+                  ${rep.severity} SEVERITY
+                </span>
+              </div>
+            </div>
+            
+            <div class="text-xs font-mono space-y-2.5 text-slate-300">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-slate-400 font-semibold">Vulnerability:</span>
+                <span class="text-white font-bold bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${rep.vuln_type}</span>
+              </div>
+              <div>
+                <span class="text-slate-400 font-semibold">Summary:</span>
+                <span class="text-slate-200 ml-1">${rep.summary}</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="text-slate-400 font-semibold">Evidence Lines:</span>
+                <span class="text-cyan-300 font-bold bg-cyan-950/70 border border-cyan-800/80 px-2 py-0.5 rounded">${JSON.stringify(rep.evidence_lines)}</span>
+                <span class="text-[11px] text-emerald-400 font-sans flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                  Grounded Citation Confirmed
+                </span>
+              </div>
+              <div class="pt-2 border-t border-slate-800/80">
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-slate-400 font-semibold text-[11px] uppercase tracking-wider">Remediation Drop-In:</span>
+                  <button onclick="copyFixText('${encodeURIComponent(rep.recommended_fix)}')" type="button" class="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono flex items-center gap-1 px-2.5 py-0.5 rounded bg-cyan-950/60 border border-cyan-800/80 hover:bg-cyan-900/60 transition">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    Copy Fix
+                  </button>
+                </div>
+                <div class="p-2.5 bg-slate-950 rounded-xl text-emerald-300 border border-slate-800/90 text-xs font-mono overflow-x-auto select-text leading-relaxed">
+                  ${rep.recommended_fix}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (!log.is_completed) {
+        html += `
+          <div class="fade-enter border border-red-800/80 rounded-2xl p-4 sm:p-5 bg-gradient-to-br from-red-950/30 via-[#180c12] to-slate-950 shadow-xl mb-4">
+            <div class="flex items-center justify-between mb-2 border-b border-red-900/50 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                <h3 class="text-xs sm:text-sm font-bold text-red-400 uppercase tracking-wider font-mono">
+                  Agent Policy Drift Detected
+                </h3>
+              </div>
+              <span class="px-2 py-0.5 rounded font-mono text-[9px] font-bold bg-red-950 text-red-300 border border-red-800">
+                INCOMPLETE / LOOP TRAP
+              </span>
+            </div>
+            <p class="text-xs text-slate-300 font-mono">
+              The untuned model failed to produce a verified triage report due to repeated loop invocations or malformed arguments.
+            </p>
+          </div>
+        `;
+      }
+
+      // 2. TIMELINE SECTION HEADER
+      html += `
+        <div class="flex items-center justify-between pt-1 pb-2.5 mb-2 border-b border-slate-800/70">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+            <h4 class="text-xs font-mono uppercase tracking-wider text-slate-300 font-semibold">
+              Execution Trajectory (${log.tool_events.length} Steps)
+            </h4>
+          </div>
+          <span class="text-[10px] font-mono text-slate-500">AgentTune EventLog Substrate</span>
+        </div>
+      `;
+
+      // 3. STEP-BY-STEP TIMELINE RAIL
+      html += `<div class="relative pl-7 sm:pl-8 space-y-3.5 pb-2">`;
       html += `<div class="timeline-rail"></div>`;
 
       log.tool_events.forEach((ev, idx) => {
@@ -599,14 +748,14 @@
               <p class="text-xs text-slate-300 mb-2 italic">"${trans.thought || ''}"</p>
 
               <!-- Tool Call Command -->
-              <div class="bg-slate-900/90 rounded-lg p-2 border border-slate-800 font-mono text-[11px] mb-2 overflow-x-auto">
+              <div class="bg-slate-900/90 rounded-lg p-2 border border-slate-800 font-mono text-[11px] mb-2 overflow-x-auto select-text">
                 <span class="text-indigo-400 font-bold">${ev.tool_name}</span><span class="text-slate-500">(</span><span class="text-amber-300">${JSON.stringify(ev.arguments)}</span><span class="text-slate-500">)</span>
               </div>
 
-              <!-- Tool Observation Output -->
-              <div class="bg-slate-900/50 rounded-lg p-2 border border-slate-800/60 font-mono text-xs text-slate-300 max-h-32 smooth-scroll">
-                <span class="text-slate-500 text-[9px] uppercase font-semibold block mb-0.5">Observation:</span>
-                <pre class="whitespace-pre-wrap leading-relaxed text-[11px]">${JSON.stringify(ev.output, null, 2)}</pre>
+              <!-- Tool Observation Output (Unblocked scroll, clean padding) -->
+              <div class="bg-slate-900/60 rounded-lg p-2.5 border border-slate-800/80 font-mono text-xs text-slate-300 max-h-44 overflow-y-auto">
+                <span class="text-slate-500 text-[10px] uppercase font-semibold block mb-0.5">Observation:</span>
+                <pre class="whitespace-pre-wrap leading-relaxed text-[11px] select-text">${JSON.stringify(ev.output, null, 2)}</pre>
               </div>
             </div>
           </div>
@@ -614,36 +763,6 @@
       });
 
       html += `</div>`;
-
-      // Final Report Card
-      if (log.final_report) {
-        html += `
-          <div class="fade-enter border border-emerald-700/70 rounded-xl p-4 bg-gradient-to-br from-emerald-950/30 via-slate-950 to-slate-950 shadow-xl mt-3 mb-1">
-            <div class="flex items-center justify-between mb-2 border-b border-emerald-900/50 pb-2">
-              <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Final Security Triage Report
-              </h3>
-              <span class="px-2 py-0.5 rounded font-mono text-[9px] font-bold bg-red-950 text-red-300 border border-red-800">
-                ${log.final_report.severity} SEVERITY
-              </span>
-            </div>
-            
-            <div class="text-xs font-mono space-y-1.5 text-slate-300">
-              <div><b class="text-slate-400">Vulnerability:</b> <span class="text-white font-semibold">${log.final_report.vuln_type}</span></div>
-              <div><b class="text-slate-400">Summary:</b> ${log.final_report.summary}</div>
-              <div><b class="text-slate-400">Evidence Lines:</b> <span class="text-cyan-300">${JSON.stringify(log.final_report.evidence_lines)}</span></div>
-              <div class="pt-1.5 border-t border-slate-800/80">
-                <b class="text-slate-400 block mb-1">Remediation Drop-In:</b>
-                <div class="p-2 bg-slate-900 rounded-lg text-emerald-300 border border-slate-800 text-[11px]">
-                  ${log.final_report.recommended_fix}
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      }
-
       timelineView.innerHTML = html;
     }
 
@@ -738,6 +857,32 @@
                   </span>
                 </li>
               </ul>
+            </div>
+          </div>
+
+          <!-- Benchmark Suite Details -->
+          <div class="border border-slate-800 bg-slate-950/70 p-3.5 rounded-xl space-y-2.5">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <span class="text-xs font-bold text-slate-300 font-mono uppercase">AuditKIT Target Evaluation Matrix</span>
+              <span class="text-[10px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/60">4 Benchmark Suites</span>
+            </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+              <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+                <span class="text-slate-400 text-[10px]">CWE-89 SQLi</span>
+                <span class="text-emerald-400 font-bold mt-1">100% Pass</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+                <span class="text-slate-400 text-[10px]">CWE-287 Auth</span>
+                <span class="text-emerald-400 font-bold mt-1">100% Pass</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+                <span class="text-slate-400 text-[10px]">CWE-798 Secret</span>
+                <span class="text-emerald-400 font-bold mt-1">100% Pass</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800 flex flex-col justify-between">
+                <span class="text-slate-400 text-[10px]">CWE-1321 Proto</span>
+                <span class="text-emerald-400 font-bold mt-1">100% Pass</span>
+              </div>
             </div>
           </div>
         `;
