@@ -26,3 +26,19 @@ def test_synthetic_trajectory_generation():
         assert t.is_completed is True
         assert len(t.tool_events) == 4
         assert t.final_report is not None
+
+def test_live_single_session_audit():
+    from src.engine.agent_runtime import AgentRuntime
+    evaluator = AuditEvaluator()
+
+    tuned_log = AgentRuntime(mode="tuned").run("Audit file", "auth_bypass.py")
+    tuned_audit = evaluator.evaluate_single_log(tuned_log, mode="tuned")
+    assert tuned_audit["metrics"]["schema_validity_index_pct"] == 100.0
+    assert tuned_audit["metrics"]["grounded_citation_precision_pct"] == 100.0
+    assert tuned_audit["metrics"]["loop_trajectory_pct"] == 0.0
+
+    base_log = AgentRuntime(mode="baseline").run("Audit file", "auth_bypass.py")
+    base_audit = evaluator.evaluate_single_log(base_log, mode="baseline")
+    assert base_audit["metrics"]["schema_validity_index_pct"] == 75.0
+    assert base_audit["metrics"]["loop_trajectory_pct"] == 25.0
+    assert base_audit["metrics"]["grounded_citation_precision_pct"] == 0.0

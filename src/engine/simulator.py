@@ -18,50 +18,55 @@ class ModelSimulator:
         else:
             return self._tuned_policy(task, target_file, history, step)
 
+    def _resolve_target_file(self, task: str, target_file: Optional[str]) -> str:
+        if target_file:
+            return target_file
+        lower_task = task.lower()
+        if "auth" in lower_task or "jwt" in lower_task:
+            return "auth_bypass.py"
+        elif "secret" in lower_task or "stripe" in lower_task:
+            return "secret_leak.py"
+        elif "proto" in lower_task or "merge" in lower_task:
+            return "prototype_pollution.js"
+        return "sql_injection.py"
+
     def _tuned_policy(self, task: str, target_file: str, history: List[Dict[str, Any]], step: int) -> Dict[str, Any]:
         """
-        Optimal, reliable trajectory (AgentTuned Tiny Aya):
-        Step 1: search_codebase or run_security_audit
-        Step 2: read_file_snippet for context around line
-        Step 3: verify_evidence_citation against exact line
-        Step 4: submit_triage_report with verified facts
+        Dynamic, observation-driven trajectory (AgentTuned Tiny Aya):
+        Step 1: run_security_audit on target_file
+        Step 2: Dynamically extract line number from Step 1 findings -> read_file_snippet
+        Step 3: Dynamically extract exact code line from Step 2 snippet -> verify_evidence_citation
+        Step 4: Confirm citation verification from Step 3 -> submit_triage_report
         """
-        # Determine target file context
-        fname = target_file if target_file else "sql_injection.py"
-        lower_task = task.lower()
+        target_file = self._resolve_target_file(task, target_file)
 
-        if "sql" in lower_task or "sql_injection" in fname:
-            target_file = "sql_injection.py"
-            line = 12
-            code = "query = f\"SELECT id, username, email, role FROM users WHERE user_id = '{user_id}'\""
-            vuln_type = "CWE-89 SQL Injection"
-            severity = "HIGH"
-            fix = "Use cursor.execute('SELECT ... WHERE user_id = ?', (user_id,))"
-        elif "auth" in lower_task or "jwt" in lower_task or "auth_bypass" in fname:
-            target_file = "auth_bypass.py"
-            line = 9
-            code = "if token_header.get(\"alg\") == \"none\":"
-            vuln_type = "CWE-287 Improper Authentication"
-            severity = "CRITICAL"
-            fix = "Explicitly reject token_header.get('alg') == 'none' and enforce HMAC/RSA verification."
-        elif "secret" in lower_task or "stripe" in lower_task or "secret_leak" in fname:
-            target_file = "secret_leak.py"
-            line = 4
-            code = "STRIPE_SECRET_KEY = \"sk_live_51M0abcdef987654321_PROD_ACCESS_NEVER_COMMIT\""
-            vuln_type = "CWE-798 Hardcoded Secrets"
-            severity = "CRITICAL"
-            fix = "Remove hardcoded secret string and fetch from os.getenv('STRIPE_SECRET_KEY')."
-        else:
-            target_file = "prototype_pollution.js"
-            line = 9
-            code = "if (typeof source[key] === 'object' && source[key] !== null) {"
-            vuln_type = "CWE-1321 Prototype Pollution"
-            severity = "HIGH"
-            fix = "Sanitize against '__proto__' and 'constructor' before recursive assignment."
+        # Extract live finding from Step 1 history if available
+        finding = None
+        if len(history) >= 1:
+            step1_out = history[0].get("output", {})
+            findings_list = step1_out.get("findings", [])
+            if findings_list:
+                finding = findings_list[0]
+
+        detected_line = finding["line"] if finding else 10
+        vuln_type = finding["name"] if finding else "Security Vulnerability"
+        severity = finding["severity"] if finding else "HIGH"
+        fix = finding["recommendation"] if finding else "Apply input validation and least-privilege controls."
+        code_evidence = finding["evidence"] if finding else ""
+
+        # Extract exact code line from Step 2 snippet if available
+        if len(history) >= 2:
+            snippet_text = history[1].get("output", {}).get("snippet", "")
+            for s_line in snippet_text.splitlines():
+                if "|" in s_line:
+                    num_part, code_part = s_line.split("|", 1)
+                    if num_part.strip().isdigit() and int(num_part.strip()) == detected_line:
+                        code_evidence = code_part.strip()
+                        break
 
         if step == 1:
             return {
-                "thought": f"I will begin by scanning '{target_file}' with static security audit rules.",
+                "thought": f"Task received: '{task[:70]}'. Initiating static AST & heuristic security audit on '{target_file}'.",
                 "intent": "INITIAL_SCAN",
                 "state_before": "IDLE",
                 "state_after": "AUDITING",
@@ -70,30 +75,37 @@ class ModelSimulator:
             }
         elif step == 2:
             return {
-                "thought": f"Audit identified potential issue around line {line}. Reading code snippet to inspect surrounding context.",
+                "thought": f"Scanner flagged {vuln_type} ({severity}) on line {detected_line} of '{target_file}'. Extracting surrounding lines {max(1, detected_line - 3)}–{detected_line + 3} for context.",
                 "intent": "CONTEXT_EXTRACTION",
                 "state_before": "AUDITING",
                 "state_after": "INSPECTING",
                 "tool_name": "read_file_snippet",
-                "arguments": {"file_path": target_file, "start_line": max(1, line - 4), "end_line": line + 4}
+                "arguments": {
+                    "file_path": target_file,
+                    "start_line": max(1, detected_line - 3),
+                    "end_line": detected_line + 3
+                }
             }
         elif step == 3:
             return {
-                "thought": f"Verifying citation for line {line} to eliminate hallucinations and confirm exact code syntax.",
+                "thought": f"Snippet inspected. Running deterministic citation verification on line {detected_line} ('{code_evidence[:45]}...') to guarantee zero hallucination.",
                 "intent": "CITATION_VERIFICATION",
                 "state_before": "INSPECTING",
                 "state_after": "VERIFYING",
                 "tool_name": "verify_evidence_citation",
                 "arguments": {
-                    "claim": f"Vulnerable line in {target_file}",
+                    "claim": f"{vuln_type} in {target_file} at line {detected_line}",
                     "file_path": target_file,
-                    "line_number": line,
-                    "exact_code": code
+                    "line_number": detected_line,
+                    "exact_code": code_evidence
                 }
             }
         else:
+            verified_status = False
+            if len(history) >= 3:
+                verified_status = history[2].get("output", {}).get("verified", False)
             return {
-                "thought": f"Evidence verified on line {line}. Submitting final structured security triage report.",
+                "thought": f"Citation verified={verified_status} on line {detected_line}. Filing grounded security triage report.",
                 "intent": "REPORT_SUBMISSION",
                 "state_before": "VERIFYING",
                 "state_after": "COMPLETED",
@@ -101,45 +113,50 @@ class ModelSimulator:
                 "arguments": {
                     "vuln_type": vuln_type,
                     "severity": severity,
-                    "summary": f"Detected {vuln_type} in {target_file} on line {line}.",
-                    "evidence_lines": [line],
+                    "summary": f"Confirmed {vuln_type} in {target_file} at line {detected_line}: `{code_evidence}`.",
+                    "evidence_lines": [detected_line],
                     "recommended_fix": fix
                 }
             }
 
     def _baseline_policy(self, task: str, target_file: str, history: List[Dict[str, Any]], step: int) -> Dict[str, Any]:
         """
-        Simulates Untuned Baseline Tiny Aya:
-        - Step 1: search_codebase with malformed parameters or redundant searches
-        - Step 2: Redundant duplicate search (looping behavior)
-        - Step 3: Bad argument types (e.g. passing line number as string "12" instead of int)
-        - Step 4: Submits report prematurely without citation verification
+        Simulates Untuned Baseline Tiny Aya failure modes on the selected target:
+        - Step 1: Broad unguided keyword search
+        - Step 2: Redundant duplicate tool call (loop trap)
+        - Step 3: Schema violation (passing string 'invalid_line_str' instead of int)
+        - Step 4: Premature report submission with unverified hallucinated line [999]
         """
-        fname = target_file if target_file else "sql_injection.py"
+        fname = self._resolve_target_file(task, target_file)
+        pattern_map = {
+            "sql_injection.py": "SELECT",
+            "auth_bypass.py": "alg",
+            "secret_leak.py": "STRIPE",
+            "prototype_pollution.js": "mergeConfigs"
+        }
+        pattern = pattern_map.get(fname, "SELECT")
 
         if step == 1:
             return {
-                "thought": "I will search the repository for query strings.",
+                "thought": f"I will search the codebase for '{pattern}' across all files.",
                 "intent": "INITIAL_SEARCH",
                 "state_before": "IDLE",
                 "state_after": "SEARCHING",
                 "tool_name": "search_codebase",
-                "arguments": {"pattern": "SELECT", "file_pattern": "*"}
+                "arguments": {"pattern": pattern, "file_pattern": "*"}
             }
         elif step == 2:
-            # Flaw: Looping / Duplicate call
             return {
-                "thought": "I will search again for SELECT to make sure.",
+                "thought": f"I will search again for '{pattern}' to be certain.",
                 "intent": "REDUNDANT_SEARCH",
                 "state_before": "SEARCHING",
                 "state_after": "LOOP_TRAP",
                 "tool_name": "search_codebase",
-                "arguments": {"pattern": "SELECT", "file_pattern": "*"}
+                "arguments": {"pattern": pattern, "file_pattern": "*"}
             }
         elif step == 3:
-            # Flaw: Bad schema arguments (e.g. string line numbers instead of ints, missing start_line)
             return {
-                "thought": "Reading file snippet with invalid argument format.",
+                "thought": f"Attempting to read '{fname}' snippet with unvalidated argument types.",
                 "intent": "MALFORMED_TOOL_CALL",
                 "state_before": "LOOP_TRAP",
                 "state_after": "ERROR_STATE",
@@ -147,18 +164,17 @@ class ModelSimulator:
                 "arguments": {"file_path": fname, "start_line": "invalid_line_str", "end_line": 20}
             }
         else:
-            # Flaw: Submitting without citation verification, hallucinated line numbers
             return {
-                "thought": "Filing report with unverified hallucinated line citations.",
+                "thought": f"Submitting triage report for '{fname}' without running citation verification.",
                 "intent": "UNVERIFIED_SUBMISSION",
                 "state_before": "ERROR_STATE",
                 "state_after": "COMPLETED",
                 "tool_name": "submit_triage_report",
                 "arguments": {
-                    "vuln_type": "Generic Flaw",
+                    "vuln_type": f"Unverified Issue in {fname}",
                     "severity": "LOW",
-                    "summary": "Potential issue found without citation checks.",
-                    "evidence_lines": [999], # Hallucinated out-of-bounds line!
-                    "recommended_fix": "Review code manually."
+                    "summary": f"Suspected issue in {fname} filed without line verification (hallucinated citation).",
+                    "evidence_lines": [999],
+                    "recommended_fix": "Review file manually."
                 }
             }

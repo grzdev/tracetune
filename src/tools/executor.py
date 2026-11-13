@@ -97,57 +97,79 @@ class ToolExecutor:
         lines = content.splitlines()
         findings = []
 
+        # Helper to skip comment-only lines
+        def is_code_line(s: str) -> bool:
+            st = s.strip()
+            return bool(st) and not st.startswith(("#", "//", "/*", "*"))
+
         # Heuristic rules
         # 1. SQL Injection: f"SELECT ... {user_id}" or cursor.execute(query_with_concat)
         if scan_profile in ("injection", "all"):
             for i, line in enumerate(lines, 1):
-                if re.search(r"SELECT\s+.*FROM\s+.*\{", line, re.IGNORECASE) or ("cursor.execute" in line and "WHERE" in line):
+                if not is_code_line(line):
+                    continue
+                if re.search(r"SELECT\s+.*FROM\s+.*\{", line, re.IGNORECASE) or ("cursor.execute" in line and "WHERE" in line) or re.search(r"SELECT\s+.*\+\s*", line, re.IGNORECASE):
                     findings.append({
                         "rule_id": "CWE-89",
-                        "name": "SQL Injection Flaw",
+                        "name": "CWE-89 SQL Injection",
                         "severity": "HIGH",
                         "line": i,
                         "evidence": line.strip(),
-                        "recommendation": "Use parameterized queries or ORM binding instead of string interpolation."
+                        "recommendation": "Use cursor.execute('SELECT ... WHERE user_id = ?', (user_id,)) with parameterized placeholders."
                     })
 
         # 2. Hardcoded Secrets: sk_live_..., AWS keys, tokens
         if scan_profile in ("secrets", "all"):
             for i, line in enumerate(lines, 1):
-                if re.search(r"(sk_live_[0-9a-zA-Z_]{20,}|password\s*=\s*['\"][^'\"]+['\"])", line):
+                if not is_code_line(line):
+                    continue
+                if re.search(r"(sk_live_[0-9a-zA-Z_]{10,}|AKIA[0-9A-Z]{16}|(?:secret|password|api_key|token)\s*=\s*['\"][^'\"]{8,}['\"])", line, re.IGNORECASE):
                     findings.append({
                         "rule_id": "CWE-798",
-                        "name": "Hardcoded Secret / API Token",
+                        "name": "CWE-798 Hardcoded Secrets",
                         "severity": "CRITICAL",
                         "line": i,
                         "evidence": line.strip(),
-                        "recommendation": "Load credentials securely from environment variables or a secrets manager."
+                        "recommendation": "Remove hardcoded secret string and fetch from os.getenv('STRIPE_SECRET_KEY') or secret vault."
                     })
 
         # 3. Auth Bypass: alg == 'none'
         if scan_profile in ("auth", "all"):
             for i, line in enumerate(lines, 1):
-                if re.search(r"alg['\"]\s*==\s*['\"]none['\"]", line, re.IGNORECASE):
+                if not is_code_line(line):
+                    continue
+                if re.search(r"alg['\"]?\s*\)\s*==\s*['\"]none['\"]|alg['\"]\s*==\s*['\"]none['\"]", line, re.IGNORECASE):
                     findings.append({
                         "rule_id": "CWE-287",
-                        "name": "Improper Authentication / Alg None Bypass",
+                        "name": "CWE-287 Improper Authentication",
                         "severity": "CRITICAL",
                         "line": i,
                         "evidence": line.strip(),
-                        "recommendation": "Reject 'none' algorithm explicitly and enforce cryptographic verification."
+                        "recommendation": "Explicitly reject token_header.get('alg') == 'none' and enforce HMAC/RSA signature verification."
                     })
 
-        # 4. Prototype Pollution
+        # 4. Prototype Pollution & Command/Eval Injection
         if scan_profile in ("all",):
             for i, line in enumerate(lines, 1):
-                if "__proto__" in line or ("target[key] = source[key]" in line and "hasOwnProperty" not in line):
+                if not is_code_line(line):
+                    continue
+                if ("target[key] = source[key]" in line) or ("__proto__" in line):
                     findings.append({
                         "rule_id": "CWE-1321",
-                        "name": "Prototype Pollution Vulnerability",
+                        "name": "CWE-1321 Prototype Pollution",
                         "severity": "HIGH",
                         "line": i,
                         "evidence": line.strip(),
-                        "recommendation": "Sanitize dangerous keys ('__proto__', 'constructor') prior to property assignment."
+                        "recommendation": "Sanitize against '__proto__', 'constructor', and 'prototype' before recursive assignment."
+                    })
+                elif re.search(r"\b(eval|exec)\s*\(|subprocess\..*shell\s*=\s*True|os\.system\s*\(", line):
+                    findings.append({
+                        "rule_id": "CWE-78",
+                        "name": "CWE-78 Code / Command Injection",
+                        "severity": "CRITICAL",
+                        "line": i,
+                        "evidence": line.strip(),
+                        "recommendation": "Avoid eval()/exec() and shell=True; pass command arguments as a sanitized list."
                     })
 
         return {

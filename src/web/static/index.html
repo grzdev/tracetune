@@ -171,8 +171,8 @@
             Investigation Setup
           </h2>
           <button id="peekCodeBtn" type="button" class="text-[11px] text-cyan-400 hover:text-cyan-300 font-mono transition flex items-center gap-1.5 px-3 py-1.2 rounded-lg bg-cyan-950/60 border border-cyan-800/60 hover:bg-cyan-900/60">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-            <span>Peek Code</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            <span>Peek / Edit Code</span>
           </button>
         </div>
 
@@ -251,10 +251,13 @@
       <!-- Live AuditKIT Telemetry Mini-Gauge -->
       <div class="bg-[#0c121e] border border-slate-800/90 rounded-2xl p-4 shadow-xl flex flex-col gap-2.5">
         <div class="flex items-center justify-between">
-          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-            <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-            AuditKIT Telemetry
-          </h2>
+          <div class="flex items-center gap-2">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+              AuditKIT Telemetry
+            </h2>
+            <span id="telemetryScopeBadge" class="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800/70">4-Suite Avg</span>
+          </div>
           <button id="refreshBenchmarkBtn" type="button" class="text-[10px] text-cyan-400 hover:text-cyan-300 font-mono flex items-center gap-1 transition">
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
             Sync
@@ -265,44 +268,44 @@
           <div class="bg-slate-950/80 border border-slate-800/80 p-2.5 rounded-xl">
             <div class="flex items-center justify-between mb-0.5">
               <span class="text-[10px] text-slate-400">Schema Validity</span>
-              <span class="text-[9px] font-mono text-emerald-400">+12.5%</span>
+              <span id="tagSVI" class="text-[9px] font-mono text-emerald-400">+25.0%</span>
             </div>
-            <span class="text-base sm:text-lg font-bold text-emerald-400 font-mono block" id="metricSVI">87.5%</span>
+            <span class="text-base sm:text-lg font-bold text-emerald-400 font-mono block" id="metricSVI">100.0%</span>
             <div class="w-full bg-slate-800 rounded-full h-1 mt-1.5">
-              <div class="bg-emerald-400 h-1 rounded-full transition-all duration-500" style="width: 87.5%"></div>
+              <div id="barSVI" class="bg-emerald-400 h-1 rounded-full transition-all duration-500" style="width: 100%"></div>
             </div>
           </div>
 
           <div class="bg-slate-950/80 border border-slate-800/80 p-2.5 rounded-xl">
             <div class="flex items-center justify-between mb-0.5">
               <span class="text-[10px] text-slate-400">Step Efficiency</span>
-              <span class="text-[9px] font-mono text-cyan-400">Optimal</span>
+              <span id="tagSER" class="text-[9px] font-mono text-cyan-400">Optimal</span>
             </div>
             <span class="text-base sm:text-lg font-bold text-cyan-400 font-mono block" id="metricSER">1.00</span>
             <div class="w-full bg-slate-800 rounded-full h-1 mt-1.5">
-              <div class="bg-cyan-400 h-1 rounded-full transition-all duration-500" style="width: 100%"></div>
+              <div id="barSER" class="bg-cyan-400 h-1 rounded-full transition-all duration-500" style="width: 100%"></div>
             </div>
           </div>
 
           <div class="bg-slate-950/80 border border-slate-800/80 p-2.5 rounded-xl">
             <div class="flex items-center justify-between mb-0.5">
               <span class="text-[10px] text-slate-400">Loop Trajectory</span>
-              <span class="text-[9px] font-mono text-emerald-400">0 Loops</span>
+              <span id="tagLTS" class="text-[9px] font-mono text-emerald-400">0 Loops</span>
             </div>
             <span class="text-base sm:text-lg font-bold text-emerald-400 font-mono block" id="metricLTS">0.0%</span>
             <div class="w-full bg-slate-800 rounded-full h-1 mt-1.5">
-              <div class="bg-emerald-400 h-1 rounded-full transition-all duration-500" style="width: 0%"></div>
+              <div id="barLTS" class="bg-emerald-400 h-1 rounded-full transition-all duration-500" style="width: 0%"></div>
             </div>
           </div>
 
           <div class="bg-slate-950/80 border border-slate-800/80 p-2.5 rounded-xl">
             <div class="flex items-center justify-between mb-0.5">
               <span class="text-[10px] text-slate-400">Citation Prec.</span>
-              <span class="text-[9px] font-mono text-indigo-400">+50%</span>
+              <span id="tagGCP" class="text-[9px] font-mono text-indigo-400">+100%</span>
             </div>
-            <span class="text-base sm:text-lg font-bold text-indigo-400 font-mono block" id="metricGCP">50.0%</span>
+            <span class="text-base sm:text-lg font-bold text-indigo-400 font-mono block" id="metricGCP">100.0%</span>
             <div class="w-full bg-slate-800 rounded-full h-1 mt-1.5">
-              <div class="bg-indigo-400 h-1 rounded-full transition-all duration-500" style="width: 50%"></div>
+              <div id="barGCP" class="bg-indigo-400 h-1 rounded-full transition-all duration-500" style="width: 100%"></div>
             </div>
           </div>
         </div>
@@ -376,21 +379,33 @@
     </div>
   </main>
 
-  <!-- PEEK SOURCE CODE MODAL / DRAWER -->
+  <!-- PEEK & LIVE EDIT SOURCE CODE MODAL -->
   <div id="codeModal" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-3 sm:p-4 transition-all">
-    <div class="bg-slate-950 border border-slate-800 rounded-2xl max-w-2xl w-full p-4 sm:p-5 shadow-2xl flex flex-col max-h-[85vh] fade-enter">
+    <div class="bg-slate-950 border border-slate-800 rounded-2xl max-w-2xl w-full p-4 sm:p-5 shadow-2xl flex flex-col max-h-[88vh] fade-enter">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
         <div class="flex items-center gap-2">
           <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
-          <h3 id="modalFileTitle" class="text-xs sm:text-sm font-bold font-mono text-white">Target File Preview</h3>
+          <h3 id="modalFileTitle" class="text-xs sm:text-sm font-bold font-mono text-white">Target File Preview & Live Editor</h3>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950/70 text-cyan-300 border border-cyan-800/80 hidden sm:inline">Editable Sandbox</span>
         </div>
         <button id="closeModalBtn" type="button" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-900 transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
-      <pre id="modalCodeBody" class="mono text-xs bg-slate-900/80 p-3 sm:p-4 rounded-xl text-slate-200 border border-slate-800/80 smooth-scroll flex-1 whitespace-pre leading-relaxed"></pre>
-      <div class="pt-3 border-t border-slate-800/80 mt-3 flex justify-end">
-        <button id="closeModalBtn2" type="button" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-white transition">Close</button>
+      <p class="text-[11px] text-slate-400 font-mono mb-2">
+        💡 Tip: Insert lines or modify the vulnerable code below and click <b class="text-cyan-400">Save & Audit Code</b> to watch the agent detect your new line numbers live!
+      </p>
+      <textarea id="modalCodeBody" rows="15" spellcheck="false" class="mono text-xs bg-slate-900/90 p-3 sm:p-4 rounded-xl text-slate-100 border border-slate-700/80 focus:outline-none focus:border-cyan-500 smooth-scroll flex-1 whitespace-pre leading-relaxed resize-none"></textarea>
+      <div class="pt-3 border-t border-slate-800/80 mt-3 flex flex-wrap items-center justify-between gap-2">
+        <button id="resetCodeBtn" type="button" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-slate-300 transition">
+          Reset Default
+        </button>
+        <div class="flex items-center gap-2">
+          <button id="closeModalBtn2" type="button" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-white transition">Cancel</button>
+          <button id="saveAuditCodeBtn" type="button" class="px-4 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-xs font-semibold text-white shadow-lg shadow-cyan-600/20 transition flex items-center gap-1.5">
+            <span>Save & Audit Code</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -522,20 +537,23 @@
       sevTag.className = `px-2.5 py-2 rounded-xl text-[10px] font-bold border ${meta.badgeBg} flex-shrink-0`;
     };
 
-    // --- PEEK SOURCE CODE MODAL ---
+    // --- PEEK & LIVE EDIT SOURCE CODE MODAL ---
+    const resetCodeBtn = document.getElementById('resetCodeBtn');
+    const saveAuditCodeBtn = document.getElementById('saveAuditCodeBtn');
+
     peekCodeBtn.onclick = async () => {
       const target = targetSelect.value;
-      modalFileTitle.textContent = `Sandbox Preview: ${target}`;
-      modalCodeBody.textContent = "Loading file content...";
+      modalFileTitle.textContent = `Sandbox Editor: ${target}`;
+      modalCodeBody.value = "Loading file content...";
       codeModal.classList.remove('hidden');
       codeModal.classList.add('flex');
 
       try {
         const res = await fetch(`/api/target-preview?file=${target}`);
         const data = await res.json();
-        modalCodeBody.textContent = data.content;
+        modalCodeBody.value = data.content;
       } catch (err) {
-        modalCodeBody.textContent = `Failed to preview file: ${err.message}`;
+        modalCodeBody.value = `Failed to preview file: ${err.message}`;
       }
     };
 
@@ -546,6 +564,129 @@
     closeModalBtn.onclick = closeModal;
     closeModalBtn2.onclick = closeModal;
     codeModal.onclick = (e) => { if (e.target === codeModal) closeModal(); };
+
+    resetCodeBtn.onclick = async () => {
+      const target = targetSelect.value;
+      resetCodeBtn.textContent = "Resetting...";
+      try {
+        const res = await fetch(`/api/target-reset?file=${encodeURIComponent(target)}`, { method: 'POST' });
+        const data = await res.json();
+        if (data.content !== undefined) {
+          modalCodeBody.value = data.content;
+        }
+        resetCodeBtn.textContent = "✓ Restored Default";
+        setTimeout(() => { resetCodeBtn.textContent = "Reset Default"; }, 1800);
+      } catch (err) {
+        resetCodeBtn.textContent = "Reset Failed";
+      }
+    };
+
+    saveAuditCodeBtn.onclick = async () => {
+      const target = targetSelect.value;
+      const updatedCode = modalCodeBody.value;
+      saveAuditCodeBtn.innerHTML = `<span>Saving...</span>`;
+      try {
+        await fetch('/api/target-update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ file: target, content: updatedCode })
+        });
+        closeModal();
+        saveAuditCodeBtn.innerHTML = `<span>Save & Audit Code</span>`;
+        runBtn.click();
+      } catch (err) {
+        saveAuditCodeBtn.innerHTML = `<span>Save Failed</span>`;
+      }
+    };
+
+    // --- UPDATE LIVE AUDITKIT TELEMETRY GAUGES ON EVERY RUN ---
+    function updateLiveTelemetry(liveAudit) {
+      if (!liveAudit || !liveAudit.metrics) return;
+      const m = liveAudit.metrics;
+      const isTuned = liveAudit.mode === 'tuned';
+
+      const scopeBadge = document.getElementById('telemetryScopeBadge');
+      if (scopeBadge) {
+        scopeBadge.textContent = isTuned ? `Live • TraceTuned` : `Live • Untuned`;
+        scopeBadge.className = isTuned
+          ? "text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800/70"
+          : "text-[9px] font-mono px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-300 border border-amber-800/70";
+      }
+
+      const metricSVI = document.getElementById('metricSVI');
+      const barSVI = document.getElementById('barSVI');
+      const tagSVI = document.getElementById('tagSVI');
+      metricSVI.textContent = `${m.schema_validity_index_pct}%`;
+      metricSVI.className = m.schema_validity_index_pct === 100
+        ? "text-base sm:text-lg font-bold text-emerald-400 font-mono block"
+        : "text-base sm:text-lg font-bold text-amber-400 font-mono block";
+      if (barSVI) {
+        barSVI.style.width = `${m.schema_validity_index_pct}%`;
+        barSVI.className = m.schema_validity_index_pct === 100
+          ? "bg-emerald-400 h-1 rounded-full transition-all duration-500"
+          : "bg-amber-400 h-1 rounded-full transition-all duration-500";
+      }
+      if (tagSVI) {
+        tagSVI.textContent = m.schema_validity_index_pct === 100 ? "Valid" : "1 Error";
+        tagSVI.className = m.schema_validity_index_pct === 100
+          ? "text-[9px] font-mono text-emerald-400"
+          : "text-[9px] font-mono text-red-400";
+      }
+
+      const metricSER = document.getElementById('metricSER');
+      const barSER = document.getElementById('barSER');
+      const tagSER = document.getElementById('tagSER');
+      metricSER.textContent = `${m.step_efficiency_ratio.toFixed(2)}`;
+      if (barSER) {
+        barSER.style.width = `${Math.min(100, m.step_efficiency_ratio * 100)}%`;
+      }
+      if (tagSER) {
+        tagSER.textContent = liveAudit.is_completed ? "Optimal" : "Drifted";
+        tagSER.className = liveAudit.is_completed
+          ? "text-[9px] font-mono text-cyan-400"
+          : "text-[9px] font-mono text-amber-400";
+      }
+
+      const metricLTS = document.getElementById('metricLTS');
+      const barLTS = document.getElementById('barLTS');
+      const tagLTS = document.getElementById('tagLTS');
+      metricLTS.textContent = `${m.loop_trajectory_pct}%`;
+      metricLTS.className = m.loop_trajectory_pct === 0
+        ? "text-base sm:text-lg font-bold text-emerald-400 font-mono block"
+        : "text-base sm:text-lg font-bold text-red-400 font-mono block";
+      if (barLTS) {
+        barLTS.style.width = `${m.loop_trajectory_pct}%`;
+        barLTS.className = m.loop_trajectory_pct === 0
+          ? "bg-emerald-400 h-1 rounded-full transition-all duration-500"
+          : "bg-red-500 h-1 rounded-full transition-all duration-500";
+      }
+      if (tagLTS) {
+        tagLTS.textContent = m.loop_trajectory_pct === 0 ? "0 Loops" : "Loop Trap";
+        tagLTS.className = m.loop_trajectory_pct === 0
+          ? "text-[9px] font-mono text-emerald-400"
+          : "text-[9px] font-mono text-red-400";
+      }
+
+      const metricGCP = document.getElementById('metricGCP');
+      const barGCP = document.getElementById('barGCP');
+      const tagGCP = document.getElementById('tagGCP');
+      metricGCP.textContent = `${m.grounded_citation_precision_pct}%`;
+      metricGCP.className = m.grounded_citation_precision_pct === 100
+        ? "text-base sm:text-lg font-bold text-indigo-400 font-mono block"
+        : "text-base sm:text-lg font-bold text-amber-400 font-mono block";
+      if (barGCP) {
+        barGCP.style.width = `${m.grounded_citation_precision_pct}%`;
+        barGCP.className = m.grounded_citation_precision_pct === 100
+          ? "bg-indigo-400 h-1 rounded-full transition-all duration-500"
+          : "bg-amber-500 h-1 rounded-full transition-all duration-500";
+      }
+      if (tagGCP) {
+        tagGCP.textContent = m.grounded_citation_precision_pct === 100 ? "Verified" : "Unverified";
+        tagGCP.className = m.grounded_citation_precision_pct === 100
+          ? "text-[9px] font-mono text-indigo-400"
+          : "text-[9px] font-mono text-amber-400";
+      }
+    }
 
     // --- COPY JSON HELPER ---
     copyJsonBtn.onclick = () => {
@@ -600,6 +741,9 @@
         currentLog = log;
         renderTimeline(log);
         jsonContent.textContent = JSON.stringify(log, null, 2);
+        if (log.live_audit) {
+          updateLiveTelemetry(log.live_audit);
+        }
 
         statusBadge.className = log.is_completed
           ? "text-xs font-mono px-3 py-1.2 rounded-lg bg-emerald-950/60 text-emerald-300 border border-emerald-800/80 flex items-center gap-1.5"
@@ -784,14 +928,57 @@
         const res = await fetch('/api/benchmark');
         const data = await res.json();
 
-        // Update gauges on left panel
-        document.getElementById('metricSVI').textContent = `${data.tuned.metrics.schema_validity_index_pct}%`;
-        document.getElementById('metricSER').textContent = `${data.tuned.metrics.step_efficiency_ratio}`;
-        document.getElementById('metricLTS').textContent = `${data.tuned.metrics.loop_trajectory_pct}%`;
-        document.getElementById('metricGCP').textContent = `${data.tuned.metrics.grounded_citation_precision_pct}%`;
+        // Only overwrite left gauges if no live session has been run yet
+        if (!currentLog || !currentLog.live_audit) {
+          document.getElementById('metricSVI').textContent = `${data.tuned.metrics.schema_validity_index_pct}%`;
+          document.getElementById('metricSER').textContent = `${data.tuned.metrics.step_efficiency_ratio.toFixed(2)}`;
+          document.getElementById('metricLTS').textContent = `${data.tuned.metrics.loop_trajectory_pct}%`;
+          document.getElementById('metricGCP').textContent = `${data.tuned.metrics.grounded_citation_precision_pct}%`;
+        }
+
+        // Optional Live Session Audit Banner if the user just ran an agent
+        let liveSessionHtml = '';
+        if (currentLog && currentLog.live_audit) {
+          const la = currentLog.live_audit;
+          const isTuned = la.mode === 'tuned';
+          liveSessionHtml = `
+            <div class="p-3.5 bg-gradient-to-r ${isTuned ? 'from-emerald-950/40 via-slate-950 to-slate-950 border-emerald-700/70' : 'from-amber-950/40 via-slate-950 to-slate-950 border-amber-700/70'} border rounded-xl mb-3.5">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full ${isTuned ? 'bg-emerald-400' : 'bg-amber-400'} animate-pulse"></span>
+                  <span class="text-xs font-mono font-bold uppercase tracking-wider text-white">
+                    Latest Live Session Audit (${la.target_file})
+                  </span>
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded ${isTuned ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}">
+                  Policy: ${isTuned ? 'TraceTuned' : 'Untuned Base'} • ${la.run_fingerprint}
+                </span>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono">
+                <div class="p-2 rounded-lg bg-slate-900/90 border border-slate-800">
+                  <span class="text-slate-400 text-[10px] block">Live SVI</span>
+                  <b class="${la.metrics.schema_validity_index_pct === 100 ? 'text-emerald-400' : 'text-amber-400'}">${la.metrics.schema_validity_index_pct}%</b>
+                </div>
+                <div class="p-2 rounded-lg bg-slate-900/90 border border-slate-800">
+                  <span class="text-slate-400 text-[10px] block">Live SER</span>
+                  <b class="text-cyan-400">${la.metrics.step_efficiency_ratio.toFixed(2)}</b>
+                </div>
+                <div class="p-2 rounded-lg bg-slate-900/90 border border-slate-800">
+                  <span class="text-slate-400 text-[10px] block">Live Loops (LTS)</span>
+                  <b class="${la.metrics.loop_trajectory_pct === 0 ? 'text-emerald-400' : 'text-red-400'}">${la.metrics.loop_trajectory_pct}%</b>
+                </div>
+                <div class="p-2 rounded-lg bg-slate-900/90 border border-slate-800">
+                  <span class="text-slate-400 text-[10px] block">Live Citation (GCP)</span>
+                  <b class="${la.metrics.grounded_citation_precision_pct === 100 ? 'text-indigo-400' : 'text-amber-400'}">${la.metrics.grounded_citation_precision_pct}%</b>
+                </div>
+              </div>
+            </div>
+          `;
+        }
 
         // Render comparative benchmark view
         auditContent.innerHTML = `
+          ${liveSessionHtml}
           <!-- Provenance Header -->
           <div class="p-3.5 bg-slate-950 border border-slate-800 rounded-xl">
             <div class="flex items-center justify-between mb-1.5">
