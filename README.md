@@ -13,10 +13,8 @@
 ## Tracks + Problem Statements Covered
 
 - **Track 3: Agentic Fine-tuning** (`AgentTune` + `AuditKIT` on `CohereLabs/tiny-aya-fire`)
-  - **Problem Statement #1 — Reliable tool calling**: Train an agent with reinforcement learning on real tool-calling rollouts to choose the right tool, pass well-formed arguments, and call tools in the right order.
-  - **Problem Statement #2 — Efficient trajectories**: Cut redundant, looping, or failed tool calls and the number of steps per task without lowering the success rate.
-  - **Problem Statement #7 — Business workflow and decision agents**: Automate a multi-step security triage workflow with deterministic verification rules and a full two-tier audit trail.
-  - **Problem Statement #9 — Reward design and reward-hacking defences**: Design process rewards and deterministic groundedness checks (`verify_evidence_citation`) that raise real task success without being gamed.
+  - **Problem Statement #1 — Reliable tool calling (Primary)**: Train an agent with reinforcement learning on real tool-calling rollouts to choose the right tool, pass well-formed arguments, and call tools in the right order.
+  - **Problem Statement #2 — Efficient trajectories (Primary)**: Cut redundant, looping, or failed tool calls and the number of steps per task without lowering the success rate.
 
 ---
 
