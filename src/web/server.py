@@ -20,17 +20,38 @@ class RunRequest(BaseModel):
 
 @app.get("/api/targets")
 def get_targets():
-    """Lists available sandbox code targets."""
+    """Lists available sandbox code targets with metadata."""
     files = []
+    metadata_map = {
+        "sql_injection.py": {"vuln": "CWE-89 SQL Injection", "severity": "HIGH", "lang": "Python"},
+        "auth_bypass.py": {"vuln": "CWE-287 Auth Bypass", "severity": "CRITICAL", "lang": "Python"},
+        "secret_leak.py": {"vuln": "CWE-798 Hardcoded Secret", "severity": "CRITICAL", "lang": "Python"},
+        "prototype_pollution.js": {"vuln": "CWE-1321 Prototype Pollution", "severity": "HIGH", "lang": "JavaScript"}
+    }
     if SANDBOX_DIR.exists():
         for f in SANDBOX_DIR.iterdir():
             if f.is_file() and not f.name.startswith("__"):
+                meta = metadata_map.get(f.name, {"vuln": "Security Vulnerability", "severity": "HIGH", "lang": f.suffix[1:].upper()})
                 files.append({
                     "name": f.name,
                     "extension": f.suffix,
-                    "size_bytes": f.stat().st_size
+                    "size_bytes": f.stat().st_size,
+                    **meta
                 })
     return {"targets": files}
+
+@app.get("/api/target-preview")
+def get_target_preview(file: str):
+    """Returns content of the target file for live inspection."""
+    target = SANDBOX_DIR / file
+    if target.exists() and target.is_file():
+        content = target.read_text(encoding="utf-8", errors="replace")
+        return {
+            "file": file,
+            "content": content,
+            "lines_count": len(content.splitlines())
+        }
+    return {"error": f"File '{file}' not found", "content": ""}
 
 @app.post("/api/run")
 def run_investigation(req: RunRequest):
