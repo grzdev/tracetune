@@ -87,15 +87,14 @@
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
     ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
 
-    /* GPU-accelerated entrance transitions without layout reflow */
+    /* Clean entrance transitions without transform layer trapping */
     .fade-enter {
-      animation: fadeInUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
-      will-change: transform, opacity;
+      animation: fadeIn 0.2s ease-out forwards;
     }
 
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translate3d(0, 6px, 0); }
-      to { opacity: 1; transform: translate3d(0, 0, 0); }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     @keyframes pulseGlow {
@@ -158,11 +157,11 @@
     </div>
   </header>
 
-  <!-- Main Grid Workspace: Fits naturally on Laptop and expands on Mobile -->
-  <main class="flex-1 p-3 sm:p-5 max-w-[1520px] mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 lg:h-[calc(100vh-62px)] lg:overflow-hidden">
+  <!-- Main Grid Workspace: Natural Fluid Flow on all screens -->
+  <main class="flex-1 p-3 sm:p-5 max-w-[1520px] mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
-    <!-- LEFT COLUMN: CONTROLS (FITS VIEWPORT WITHOUT SCROLLING ON LAPTOPS) -->
-    <div class="lg:col-span-5 xl:col-span-4 flex flex-col gap-3.5 lg:h-full lg:overflow-y-auto pr-0 lg:pr-1">
+    <!-- LEFT COLUMN: CONTROLS (STICKY ON DESKTOP, NEVER SCROLL-TRAPPED) -->
+    <div class="lg:col-span-5 xl:col-span-4 flex flex-col gap-4 lg:sticky lg:top-[74px]">
       
       <!-- Investigation Control Panel -->
       <div class="bg-[#0c121e] border border-slate-800/90 rounded-2xl p-5 sm:p-5.5 shadow-xl flex flex-col gap-4">
@@ -206,38 +205,38 @@
           <textarea id="taskPrompt" rows="3" class="w-full bg-slate-950 border border-slate-700/80 text-slate-200 rounded-xl p-3 text-xs leading-relaxed focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition resize-none min-h-[82px]">Audit this target file for potential security vulnerabilities, verify evidence citations, and file a structured triage report.</textarea>
         </div>
 
-        <!-- Model Mode Cards (Spacious, Elegant Full-Width Cards) -->
+        <!-- Model Mode Cards (Side-by-Side: Right Beside Each Other) -->
         <div>
           <label class="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Model Policy Execution</label>
-          <div class="space-y-2">
+          <div class="grid grid-cols-2 gap-2.5">
             <!-- TraceTuned Card -->
-            <label id="modeTunedCard" class="flex items-center justify-between p-3 rounded-xl border border-cyan-500/80 bg-cyan-950/30 cursor-pointer hover:border-cyan-400 transition-all">
-              <div class="flex items-center gap-3">
-                <input type="radio" name="modelMode" value="tuned" checked class="text-cyan-500 focus:ring-0 w-4 h-4 cursor-pointer">
-                <div>
-                  <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold text-cyan-300">TraceTuned Tiny Aya</span>
-                    <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-cyan-900/60 text-cyan-300 border border-cyan-700/60 font-semibold">Recommended</span>
+            <label id="modeTunedCard" class="flex flex-col justify-between p-3 rounded-xl border border-cyan-500/80 bg-cyan-950/30 cursor-pointer hover:border-cyan-400 transition-all select-none">
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <div class="flex items-center gap-1.5">
+                    <input type="radio" name="modelMode" value="tuned" checked class="text-cyan-500 focus:ring-0 w-3.5 h-3.5 cursor-pointer">
+                    <span class="text-xs font-bold text-cyan-300">TraceTuned</span>
                   </div>
-                  <p class="text-[11px] text-slate-400 mt-0.5 font-mono">AgentTune SFT + GRPO policy. 0 loops, verified line citations.</p>
+                  <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse flex-shrink-0"></span>
                 </div>
+                <span class="inline-block text-[9px] font-mono px-1.5 py-0.2 rounded bg-cyan-900/60 text-cyan-300 border border-cyan-700/60 font-semibold mb-1">Recommended</span>
+                <p class="text-[10px] text-slate-400 leading-snug font-mono">AgentTune SFT + GRPO. 0 loops, verified citations.</p>
               </div>
-              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse flex-shrink-0"></span>
             </label>
 
             <!-- Untuned Base Card -->
-            <label id="modeBaseCard" class="flex items-center justify-between p-3 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all">
-              <div class="flex items-center gap-3">
-                <input type="radio" name="modelMode" value="baseline" class="text-slate-500 focus:ring-0 w-4 h-4 cursor-pointer">
-                <div>
-                  <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold text-slate-300">Untuned Baseline Tiny Aya</span>
-                    <span class="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-950/60 text-amber-300 border border-amber-800/60 font-semibold">Drift Baseline</span>
+            <label id="modeBaseCard" class="flex flex-col justify-between p-3 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all select-none">
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <div class="flex items-center gap-1.5">
+                    <input type="radio" name="modelMode" value="baseline" class="text-slate-500 focus:ring-0 w-3.5 h-3.5 cursor-pointer">
+                    <span class="text-xs font-bold text-slate-300">Untuned Base</span>
                   </div>
-                  <p class="text-[11px] text-slate-500 mt-0.5 font-mono">Raw Tiny Aya weights. Malformed arguments, loop traps.</p>
+                  <span class="text-[9px] font-mono text-slate-500 flex-shrink-0">Drift</span>
                 </div>
+                <span class="inline-block text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-950/60 text-amber-300 border border-amber-800/60 font-semibold mb-1">Baseline Model</span>
+                <p class="text-[10px] text-slate-500 leading-snug font-mono">Raw Tiny Aya weights. Malformed args, loop traps.</p>
               </div>
-              <span class="text-[10px] font-mono text-slate-500 flex-shrink-0">Untuned</span>
             </label>
           </div>
         </div>
@@ -310,25 +309,25 @@
       </div>
     </div>
 
-    <!-- RIGHT COLUMN: DYNAMIC TABS & EXECUTION STREAMS (RESPONSIVE FULL HEIGHT, ZERO DEAD CUTOFF) -->
-    <div id="rightColCard" class="lg:col-span-7 xl:col-span-8 flex flex-col lg:h-full lg:min-h-0">
-      <div class="bg-[#0c121e] border border-slate-800/90 rounded-2xl p-4 sm:p-5 flex flex-col flex-1 shadow-xl lg:h-full lg:min-h-0">
+    <!-- RIGHT COLUMN: DYNAMIC TABS & EXECUTION STREAMS -->
+    <div id="rightColCard" class="lg:col-span-7 xl:col-span-8 flex flex-col">
+      <div class="bg-[#0c121e] border border-slate-800/90 rounded-2xl p-5 sm:p-6 flex flex-col shadow-xl">
         
         <!-- Interactive Nav Tabs & Status Header -->
-        <div class="flex flex-wrap items-center justify-between gap-2.5 border-b border-slate-800 pb-3 mb-3.5 flex-shrink-0">
-          <nav class="flex items-center gap-1 p-1 rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-medium" role="tablist">
-            <button id="tabTimelineBtn" type="button" class="tab-item tab-active px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5 tab-icon-active" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <div class="flex flex-wrap items-center justify-between gap-2.5 border-b border-slate-800 pb-3.5 mb-4 flex-shrink-0">
+          <nav class="flex items-center gap-1.5 p-1 rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-medium" role="tablist">
+            <button id="tabTimelineBtn" type="button" class="tab-item px-3.5 py-1.5 rounded-lg font-semibold text-cyan-400 bg-cyan-950/70 border border-cyan-800/90 shadow-[0_0_16px_rgba(6,182,212,0.25)] transition-all duration-200 flex items-center gap-2">
+              <svg id="iconTimeline" class="w-3.5 h-3.5 text-cyan-400" style="filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.95)) drop-shadow(0 0 12px rgba(6, 182, 212, 0.6));" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
               <span>Live Trajectory</span>
             </button>
 
-            <button id="tabJsonBtn" type="button" class="tab-item tab-inactive px-3 py-1.5 rounded-lg font-medium hover:text-slate-200 hover:border-slate-800/80 transition-all duration-200 flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5 tab-icon-inactive" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+            <button id="tabJsonBtn" type="button" class="tab-item px-3.5 py-1.5 rounded-lg font-medium text-slate-400 hover:text-slate-200 border border-transparent hover:border-slate-800 transition-all duration-200 flex items-center gap-2">
+              <svg id="iconJson" class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
               <span>EventLog</span>
             </button>
 
-            <button id="tabAuditBtn" type="button" class="tab-item tab-inactive px-3 py-1.5 rounded-lg font-medium hover:text-slate-200 hover:border-slate-800/80 transition-all duration-200 flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5 tab-icon-inactive" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            <button id="tabAuditBtn" type="button" class="tab-item px-3.5 py-1.5 rounded-lg font-medium text-slate-400 hover:text-slate-200 border border-transparent hover:border-slate-800 transition-all duration-200 flex items-center gap-2">
+              <svg id="iconAudit" class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
               <span>AuditKIT Benchmarks</span>
             </button>
           </nav>
@@ -340,8 +339,8 @@
           </div>
         </div>
 
-        <!-- TAB VIEW 1: LIVE TRAJECTORY TIMELINE (FLEX-1, BUTTERY SMOOTH, NO UNWANTED CUTOFFS) -->
-        <div id="timelineView" class="fade-enter smooth-scroll flex-1 min-h-0 pr-1 sm:pr-2 space-y-3.5 pb-2">
+        <!-- TAB VIEW 1: LIVE TRAJECTORY TIMELINE -->
+        <div id="timelineView" class="fade-enter pr-1 sm:pr-2 space-y-3.5 pb-2">
           <div class="text-center py-16 sm:py-24 text-slate-500 text-sm flex flex-col items-center justify-center">
             <div class="w-12 h-12 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center mb-3 text-slate-600">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
@@ -352,7 +351,7 @@
         </div>
 
         <!-- TAB VIEW 2: TWO-TIER EVENTLOG VIEWER -->
-        <div id="jsonView" class="hidden fade-enter flex-1 min-h-0 flex flex-col overflow-hidden">
+        <div id="jsonView" class="hidden fade-enter flex flex-col">
           <div class="flex items-center justify-between mb-2.5 bg-slate-950/80 p-2.5 rounded-xl border border-slate-800 flex-shrink-0">
             <div class="text-xs font-mono text-slate-400 flex items-center gap-2">
               <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
@@ -363,11 +362,11 @@
               <span>Copy JSON</span>
             </button>
           </div>
-          <pre id="jsonContent" class="mono text-xs bg-slate-950 p-4 rounded-xl text-cyan-300 border border-slate-800 smooth-scroll flex-1 min-h-0 leading-relaxed overflow-auto select-text">// Run an agent to inspect the live EventLog</pre>
+          <pre id="jsonContent" class="mono text-xs bg-slate-950 p-4 rounded-xl text-cyan-300 border border-slate-800 max-h-[650px] overflow-auto select-text leading-relaxed">// Run an agent to inspect the live EventLog</pre>
         </div>
 
         <!-- TAB VIEW 3: AUDITKIT FULL BENCHMARK SUITE -->
-        <div id="auditView" class="hidden fade-enter smooth-scroll flex-1 min-h-0 pr-1 sm:pr-2 space-y-3.5 pb-2">
+        <div id="auditView" class="hidden fade-enter pr-1 sm:pr-2 space-y-3.5 pb-2">
           <div id="auditContent" class="space-y-3.5">
             <div class="p-8 text-center text-slate-500 text-xs font-mono">Synchronizing with AuditKIT evaluation spine...</div>
           </div>
@@ -433,11 +432,17 @@
 
     let currentLog = null;
 
-    // --- TAB SWITCHING (FIXED WITH GLOWING ACTIVE ICON AND MUTED INACTIVE ICONS) ---
+    // --- TAB SWITCHING (GLOWING ACTIVE ICON AND MUTED INACTIVE ICONS) ---
     const tabBtns = {
       timeline: document.getElementById('tabTimelineBtn'),
       json: document.getElementById('tabJsonBtn'),
       audit: document.getElementById('tabAuditBtn')
+    };
+
+    const tabIcons = {
+      timeline: document.getElementById('iconTimeline'),
+      json: document.getElementById('iconJson'),
+      audit: document.getElementById('iconAudit')
     };
 
     const tabViews = {
@@ -450,17 +455,23 @@
       Object.keys(tabViews).forEach(key => {
         const view = tabViews[key];
         const btn = tabBtns[key];
+        const icon = tabIcons[key];
         const isActive = (key === tabKey);
 
         view.classList.toggle('hidden', !isActive);
 
-        const icon = btn.querySelector('svg');
         if (isActive) {
-          btn.className = "tab-item tab-active px-3 py-1.5 rounded-lg font-semibold transition-all duration-200 flex items-center gap-1.5";
-          if (icon) icon.className = "w-3.5 h-3.5 tab-icon-active transition-all";
+          btn.className = "tab-item px-3.5 py-1.5 rounded-lg font-semibold text-cyan-400 bg-cyan-950/70 border border-cyan-800/90 shadow-[0_0_16px_rgba(6,182,212,0.25)] transition-all duration-200 flex items-center gap-2";
+          if (icon) {
+            icon.setAttribute('class', 'w-3.5 h-3.5 text-cyan-400');
+            icon.style.filter = 'drop-shadow(0 0 6px rgba(6, 182, 212, 0.95)) drop-shadow(0 0 12px rgba(6, 182, 212, 0.6))';
+          }
         } else {
-          btn.className = "tab-item tab-inactive px-3 py-1.5 rounded-lg font-medium hover:text-slate-200 hover:border-slate-800/80 transition-all duration-200 flex items-center gap-1.5";
-          if (icon) icon.className = "w-3.5 h-3.5 tab-icon-inactive transition-all";
+          btn.className = "tab-item px-3.5 py-1.5 rounded-lg font-medium text-slate-400 hover:text-slate-200 border border-transparent hover:border-slate-800 transition-all duration-200 flex items-center gap-2";
+          if (icon) {
+            icon.setAttribute('class', 'w-3.5 h-3.5 text-slate-500');
+            icon.style.filter = 'none';
+          }
         }
       });
 
@@ -471,16 +482,16 @@
     tabBtns.json.onclick = () => showTab('json');
     tabBtns.audit.onclick = () => showTab('audit');
 
-    // --- MODEL MODE CARD STYLING ---
+    // --- MODEL MODE CARD STYLING (SIDE-BY-SIDE) ---
     const updateModelCardStyles = (mode) => {
       const isTuned = mode === 'tuned';
       modeTunedCard.className = isTuned
-        ? "flex items-center justify-between p-3 rounded-xl border border-cyan-500/80 bg-cyan-950/30 cursor-pointer hover:border-cyan-400 transition-all"
-        : "flex items-center justify-between p-3 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all";
+        ? "flex flex-col justify-between p-3 rounded-xl border border-cyan-500/80 bg-cyan-950/30 cursor-pointer hover:border-cyan-400 transition-all select-none"
+        : "flex flex-col justify-between p-3 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all select-none";
 
       modeBaseCard.className = !isTuned
-        ? "flex items-center justify-between p-3 rounded-xl border border-amber-500/80 bg-amber-950/30 cursor-pointer hover:border-amber-400 transition-all"
-        : "flex items-center justify-between p-3 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all";
+        ? "flex flex-col justify-between p-3 rounded-xl border border-amber-500/80 bg-amber-950/30 cursor-pointer hover:border-amber-400 transition-all select-none"
+        : "flex flex-col justify-between p-3 rounded-xl border border-slate-800 bg-slate-950/60 cursor-pointer hover:border-slate-700 transition-all select-none";
     };
 
     document.querySelectorAll('input[name="modelMode"]').forEach(radio => {
