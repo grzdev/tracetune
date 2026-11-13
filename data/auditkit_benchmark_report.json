@@ -1,0 +1,105 @@
+{
+  "baseline": {
+    "mode": "baseline",
+    "run_fingerprint": "ak-00ce5bce60999801",
+    "metrics": {
+      "schema_validity_index_pct": 75.0,
+      "step_efficiency_ratio": 1.0,
+      "loop_trajectory_pct": 25.0,
+      "grounded_citation_precision_pct": 0.0,
+      "task_completion_rate_pct": 100.0
+    },
+    "summary": {
+      "total_tasks": 4,
+      "total_tool_calls": 16,
+      "duplicate_calls": 4,
+      "tasks_completed": 4
+    },
+    "task_breakdown": [
+      {
+        "task_id": "bench-01",
+        "target_file": "sql_injection.py",
+        "steps": 4,
+        "completed": true,
+        "has_final_report": true
+      },
+      {
+        "task_id": "bench-02",
+        "target_file": "auth_bypass.py",
+        "steps": 4,
+        "completed": true,
+        "has_final_report": true
+      },
+      {
+        "task_id": "bench-03",
+        "target_file": "secret_leak.py",
+        "steps": 4,
+        "completed": true,
+        "has_final_report": true
+      },
+      {
+        "task_id": "bench-04",
+        "target_file": "prototype_pollution.js",
+        "steps": 4,
+        "completed": true,
+        "has_final_report": true
+      }
+    ],
+    "evaluated_at": 1794593183.2369306
+  },
+  "tuned": {
+    "mode": "tuned",
+    "run_fingerprint": "ak-9e7486b6e67f8e6a",
+    "metrics": {
+      "schema_validity_index_pct": 100.0,
+      "step_efficiency_ratio": 1.0,
+      "loop_trajectory_pct": 0.0,
+      "grounded_citation_precision_pct": 100.0,
+      "task_completion_rate_pct": 100.0
+    },
+    "summary": {
+      "total_tasks": 4,
+      "total_tool_calls": 16,
+      "duplicate_calls": 0,
+      "tasks_completed": 4
+    },
+    "task_breakdown": [
+      {
+        "task_id": "bench-01",
+        "target_file": "sql_injection.py",
+        "steps": 4,
+        "completed": true,
+        "has_final_report": true
+      },
+      {
+        "task_id": "bench-02",
+        "target_file": "auth_bypass.py",
+        "steps": 4,
+        "completed": true,
+        "has_final_report": true
+      },
+      {
+        "task_id": "bench-03",
+        "target_file": "secret_leak.py",
+        "steps": 4,
+        "completed": true,
+        "has_final_report": true
+      },
+      {
+        "task_id": "bench-04",
+        "target_file": "prototype_pollution.js",
+        "steps": 4,
+        "completed": true,
+        "has_final_report": true
+      }
+    ],
+    "evaluated_at": 1794593183.2369306
+  },
+  "deltas": {
+    "schema_validity_improvement": 25.0,
+    "step_efficiency_gain": 0.0,
+    "loop_reduction_pct": 25.0,
+    "citation_precision_gain": 100.0
+  },
+  "auditkit_spec": "LSAL-1.2 Unified Spine (Dataset -> Adapter -> Model -> Metrics -> RunResult)"
+}
