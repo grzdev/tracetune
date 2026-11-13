@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from pydantic import BaseModel
@@ -65,6 +65,15 @@ def get_benchmark():
     """Returns comparative AuditKIT benchmarks between Baseline and Tuned models."""
     evaluator = AuditEvaluator()
     return evaluator.run_comparative_benchmark()
+
+@app.get("/favicon.ico")
+@app.get("/favicon.svg")
+def serve_favicon():
+    """Serves the official TraceTune TT favicon."""
+    fav = STATIC_DIR / "favicon.svg"
+    if fav.exists():
+        return FileResponse(fav, media_type="image/svg+xml")
+    return HTMLResponse("", status_code=204)
 
 @app.get("/", response_class=HTMLResponse)
 def serve_dashboard():

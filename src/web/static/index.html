@@ -1,52 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TraceTune — Autonomous Code & Security Agent Platform</title>
+
+  <!-- Favicon & Brand Icons -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="alternate icon" href="/favicon.ico">
+  <meta name="theme-color" content="#070a13">
+
+  <!-- SEO & Social OpenGraph Metadata -->
+  <meta name="description" content="TraceTune — Autonomous Code & Security Triage Agent Platform. Post-training Cohere Tiny Aya with Lexsi AgentTune and benchmarking with AuditKIT.">
+  <meta property="og:title" content="TraceTune — Autonomous Security Agent Platform">
+  <meta property="og:description" content="Agentic Fine-Tuning for Cohere Tiny Aya • Lexsi Stack">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/favicon.svg">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
     
     :root {
       --bg-dark: #070a13;
-      --card-bg: rgba(13, 19, 33, 0.7);
-      --card-border: rgba(30, 41, 59, 0.8);
+      --card-bg: #0c121e;
+      --card-border: rgba(30, 41, 59, 0.85);
       --accent-cyan: #06b6d4;
       --accent-indigo: #6366f1;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      color-scheme: dark;
     }
 
     body {
       font-family: 'Space Grotesk', sans-serif;
       background-color: var(--bg-dark);
       background-image: 
-        radial-gradient(circle at 10% 15%, rgba(6, 182, 212, 0.07), transparent 35%),
-        radial-gradient(circle at 90% 85%, rgba(99, 102, 241, 0.08), transparent 40%);
+        radial-gradient(circle at 10% 15%, rgba(6, 182, 212, 0.05), transparent 30%),
+        radial-gradient(circle at 90% 85%, rgba(99, 102, 241, 0.05), transparent 35%);
+      background-attachment: fixed; /* Fixes background to eliminate gradient re-rasterization on scroll */
       color: #f1f5f9;
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .mono { font-family: 'JetBrains Mono', monospace; }
 
-    /* Custom sleek scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    /* Hardware-accelerated buttery smooth scroll container */
+    .smooth-scroll {
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      will-change: scroll-position;
+      transform: translateZ(0); /* Promotes to dedicated GPU compositor layer */
+    }
 
-    /* Smooth animated transitions */
+    /* High-performance non-blocking scrollbars */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+
+    /* GPU-accelerated entrance transitions without layout reflow */
     .fade-enter {
-      animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: fadeInUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+      will-change: transform, opacity;
     }
 
     @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: translate3d(0, 8px, 0); }
+      to { opacity: 1; transform: translate3d(0, 0, 0); }
     }
 
     @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.2); }
-      50% { box-shadow: 0 0 25px rgba(6, 182, 212, 0.4); }
+      0%, 100% { box-shadow: 0 0 12px rgba(6, 182, 212, 0.15); }
+      50% { box-shadow: 0 0 20px rgba(6, 182, 212, 0.35); }
     }
 
     .glow-active {
@@ -67,7 +99,7 @@
 <body class="min-h-screen flex flex-col antialiased selection:bg-cyan-500 selection:text-black">
 
   <!-- Top Navigation Bar -->
-  <header class="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl px-6 py-3.5 flex items-center justify-between sticky top-0 z-40 transition-all">
+  <header class="border-b border-slate-800/80 bg-[#070a13]/90 backdrop-blur-md px-6 py-3.5 flex items-center justify-between sticky top-0 z-40 transition-all">
     <div class="flex items-center gap-3.5">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-indigo-600 to-violet-600 p-[1px] shadow-lg shadow-cyan-500/20">
         <div class="w-full h-full bg-slate-950 rounded-[11px] flex items-center justify-center font-bold text-cyan-400 font-mono text-base">
@@ -111,7 +143,7 @@
     <div class="lg:col-span-4 flex flex-col gap-5">
       
       <!-- Investigation Control Panel -->
-      <div class="bg-slate-900/70 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-md">
+      <div class="bg-[#0c121e] border border-slate-800/90 rounded-2xl p-5 shadow-xl">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
@@ -199,7 +231,7 @@
       </div>
 
       <!-- Live AuditKIT Telemetry Mini-Gauge -->
-      <div class="bg-slate-900/70 border border-slate-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-md">
+      <div class="bg-[#0c121e] border border-slate-800/90 rounded-2xl p-5 shadow-xl">
         <div class="flex items-center justify-between mb-3.5">
           <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
             <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
@@ -261,7 +293,7 @@
 
     <!-- RIGHT COLUMN: DYNAMIC TABS & EXECUTION STREAMS -->
     <div class="lg:col-span-8 flex flex-col gap-6">
-      <div class="bg-slate-900/70 border border-slate-800/80 rounded-2xl p-5 sm:p-6 flex flex-col flex-1 shadow-xl backdrop-blur-md">
+      <div class="bg-[#0c121e] border border-slate-800/90 rounded-2xl p-5 sm:p-6 flex flex-col flex-1 shadow-xl">
         
         <!-- Interactive Nav Tabs (Fixed Active Color Bug) -->
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3.5 mb-5">
@@ -291,7 +323,7 @@
         </div>
 
         <!-- TAB VIEW 1: LIVE TRAJECTORY TIMELINE -->
-        <div id="timelineView" class="fade-enter flex-1 overflow-y-auto max-h-[660px] pr-2 space-y-4">
+        <div id="timelineView" class="fade-enter smooth-scroll flex-1 max-h-[660px] pr-2 space-y-4">
           <div class="text-center py-20 text-slate-500 text-sm flex flex-col items-center justify-center">
             <div class="w-12 h-12 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center mb-3 text-slate-600">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
@@ -313,11 +345,11 @@
               <span>Copy JSON</span>
             </button>
           </div>
-          <pre id="jsonContent" class="mono text-xs bg-slate-950 p-4 rounded-xl text-cyan-300 border border-slate-800 overflow-x-auto flex-1 max-h-[600px] leading-relaxed">// Run an agent to inspect the live EventLog</pre>
+          <pre id="jsonContent" class="mono text-xs bg-slate-950 p-4 rounded-xl text-cyan-300 border border-slate-800 smooth-scroll flex-1 max-h-[600px] leading-relaxed">// Run an agent to inspect the live EventLog</pre>
         </div>
 
         <!-- TAB VIEW 3: AUDITKIT FULL BENCHMARK SUITE -->
-        <div id="auditView" class="hidden fade-enter flex-1 overflow-y-auto max-h-[660px] pr-2 space-y-4">
+        <div id="auditView" class="hidden fade-enter smooth-scroll flex-1 max-h-[660px] pr-2 space-y-4">
           <div id="auditContent" class="space-y-4">
             <div class="p-8 text-center text-slate-500 text-xs font-mono">Synchronizing with AuditKIT evaluation spine...</div>
           </div>
@@ -328,7 +360,7 @@
   </main>
 
   <!-- PEEK SOURCE CODE MODAL / DRAWER -->
-  <div id="codeModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4 transition-all">
+  <div id="codeModal" class="fixed inset-0 z-50 bg-black/85 hidden items-center justify-center p-4 transition-all">
     <div class="bg-slate-950 border border-slate-800 rounded-2xl max-w-2xl w-full p-5 shadow-2xl flex flex-col max-h-[85vh] fade-enter">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
         <div class="flex items-center gap-2">
