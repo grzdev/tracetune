@@ -2,7 +2,8 @@
 
 > **One-Line Claim**: Post-training **Cohere Tiny Aya (`3.35B`)** with **Lexsi AgentTune** (Two-Tier `EventLog` SFT + GRPO reward shaping) and auditing with **Lexsi AuditKIT** (`LSAL-1.2` Unified Spine) boosts tool-call schema validity from **75.0% → 100.0%**, cuts redundant search loops from **25.0% → 0.0%**, and raises grounded line-citation precision from **0.0% → 100.0%** across multi-turn security triage trajectories.
 
-[![Track 3](https://img.shields.io/badge/Lexsi_Hackathon-Track_3_Agentic_Fine--Tuning-06b6d4?style=for-the-badge)](https://hackathon.lexsi.ai/)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Platform-tracetune.netlify.app-06b6d4?style=for-the-badge)](https://tracetune.netlify.app/)
+[![Track 3](https://img.shields.io/badge/Lexsi_Hackathon-Track_3_Agentic_Fine--Tuning-3b82f6?style=for-the-badge)](https://hackathon.lexsi.ai/)
 [![Base Model](https://img.shields.io/badge/Model-Cohere_Tiny_Aya_(3.35B)-6366f1?style=for-the-badge)](https://huggingface.co/CohereLabs/tiny-aya-fire)
 [![HF Dataset](https://img.shields.io/badge/🤗_HF_Dataset-tracetune--trajectories-f59e0b?style=for-the-badge)](https://huggingface.co/datasets/saulkang/tracetune-trajectories)
 [![HF Adapter](https://img.shields.io/badge/🤗_HF_Model-tracetune--tiny--aya--lora-10b981?style=for-the-badge)](https://huggingface.co/saulkang/tracetune-tiny-aya-lora)
@@ -41,6 +42,7 @@ Small open-weights language models such as **Cohere Tiny Aya (`3.35B`)** offer l
 > - **Key Quantitative Result**: `+25.0%` Schema Validity (`75% -> 100%`), `-25.0%` Loop Rate (`25% -> 0%`), and `+100.0%` Grounded Citation Precision (`0% -> 100%`), certified under AuditKIT fingerprint **`ak-9e7486b6e67f8e6a`**.
 > - **Interactive Live Proof**: In our web dashboard, you can click **`Peek / Edit Code`**, insert blank lines or move a vulnerability to any line number, and click **`Save & Audit Code`** to watch the agent dynamically scan, read, verify, and report the exact new line number and live AuditKIT telemetry in real time.
 > - **All Public Artifacts**:
+>   - **Live Interactive Demo**: [https://tracetune.netlify.app/](https://tracetune.netlify.app/)
 >   - **HF Models Collection**: [https://huggingface.co/collections/saulkang/tracetune-lexsi-track-3-models-and-adapters-6af751ad03be12bf9a8d1cc6](https://huggingface.co/collections/saulkang/tracetune-lexsi-track-3-models-and-adapters-6af751ad03be12bf9a8d1cc6)
 >   - **HF Datasets Collection**: [https://huggingface.co/collections/saulkang/tracetune-lexsi-track-3-datasets-traces-and-benchmarks-6af751ae67a22df62abf2e5b](https://huggingface.co/collections/saulkang/tracetune-lexsi-track-3-datasets-traces-and-benchmarks-6af751ae67a22df62abf2e5b)
 >   - **GitHub Repository**: [https://github.com/grzdev/tracetune](https://github.com/grzdev/tracetune)
@@ -270,6 +272,7 @@ With the **$200 Stage 2 Hugging Face GPU credits**, we will:
 
 ## Artifacts
 
+- **Live Web Application (Demo)**: [https://tracetune.netlify.app/](https://tracetune.netlify.app/)
 - **Hugging Face Datasets Collection**: [https://huggingface.co/collections/saulkang/tracetune-lexsi-track-3-datasets-traces-and-benchmarks-6af751ae67a22df62abf2e5b](https://huggingface.co/collections/saulkang/tracetune-lexsi-track-3-datasets-traces-and-benchmarks-6af751ae67a22df62abf2e5b)
   - **Dataset & Benchmark Logs Repo**: [https://huggingface.co/datasets/saulkang/tracetune-trajectories](https://huggingface.co/datasets/saulkang/tracetune-trajectories)
 - **Hugging Face Models Collection**: [https://huggingface.co/collections/saulkang/tracetune-lexsi-track-3-models-and-adapters-6af751ad03be12bf9a8d1cc6](https://huggingface.co/collections/saulkang/tracetune-lexsi-track-3-models-and-adapters-6af751ad03be12bf9a8d1cc6)
